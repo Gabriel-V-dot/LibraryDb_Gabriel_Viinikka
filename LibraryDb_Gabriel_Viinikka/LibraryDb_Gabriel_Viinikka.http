@@ -1,0 +1,6 @@
+@LibraryDb_Gabriel_Viinikka_HostAddress = http://localhost:5171
+
+GET {{LibraryDb_Gabriel_Viinikka_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
