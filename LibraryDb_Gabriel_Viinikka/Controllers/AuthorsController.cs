@@ -31,15 +31,18 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<AuthorDTO>>> SearchAuthors(string search)
         {
+            search = search.ToLower();
+
             if (string.IsNullOrEmpty(search))
             {
                 return BadRequest();
             }
 
             List<AuthorDTO> authorDTOs = await _context.Authors
-                .Where(a => a.AuthorLastName.ToLower().Contains(search))
+                .Where(a => a.AuthorLastName.ToLower().Contains(search) || a.AuthorFirstName.ToLower().Contains(search))
                 .Select(a => a.ToAuthorDTO())
                 .ToListAsync();
+
 
             return authorDTOs;
         }
