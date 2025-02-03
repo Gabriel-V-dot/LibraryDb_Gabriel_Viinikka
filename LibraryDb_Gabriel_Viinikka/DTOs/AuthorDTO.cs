@@ -25,11 +25,10 @@
 
         }
 
-        public static Author ToAuthor(this AuthorDTO authorDTO)
+        public static Author ToAuthor(this CreateAuthorDTO authorDTO)
         {
             return new Author
             {
-                Id = authorDTO.Id,
                 AuthorFirstName = authorDTO.AuthorFirstName,
                 AuthorLastName = authorDTO.AuthorLastName
             };

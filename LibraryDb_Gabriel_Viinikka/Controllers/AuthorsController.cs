@@ -27,6 +27,23 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
             return await _context.Authors.ToListAsync();
         }
 
+        //GET: api/Authors
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<AuthorDTO>>> SearchAuthors(string search)
+        {
+            if (string.IsNullOrEmpty(search))
+            {
+                return BadRequest();
+            }
+
+            List<AuthorDTO> authorDTOs = await _context.Authors
+                .Where(a => a.AuthorLastName.ToLower().Contains(search))
+                .Select(a => a.ToAuthorDTO())
+                .ToListAsync();
+
+            return authorDTOs;
+        }
+
         // GET: api/Authors/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Author>> GetAuthor(int id)
@@ -75,12 +92,14 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         // POST: api/Authors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Author>> PostAuthor(Author author)
+        public async Task<ActionResult<Author>> PostAuthor(CreateAuthorDTO createAuthorDTO)
         {
+            Author author = createAuthorDTO.ToAuthor();
+
             _context.Authors.Add(author);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAuthor", new { id = author.Id }, author);
+            return CreatedAtAction("GetAuthor", new { id = author.Id }, author.ToAuthorDTO());
         }
 
         // DELETE: api/Authors/5
