@@ -34,11 +34,16 @@
             };
         }
 
+        public static Author ToAuthor(this AuthorDTO authorDTO)
+        {
+            return new Author
+            {   
+                Id = authorDTO.Id,
+                AuthorFirstName = authorDTO.AuthorFirstName,
+                AuthorLastName = authorDTO.AuthorLastName
+            };
 
-
-
-
-
+        }
 
 
     }
