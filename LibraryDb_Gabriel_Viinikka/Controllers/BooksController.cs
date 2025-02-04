@@ -77,21 +77,24 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpPost]
         public async Task<ActionResult<Book>> PostBook(CreateBookDTO createBookDTO)
         {
-            Book book = createBookDTO.ToBook(createBookDTO,GetAuthor(createBookDTO.BookAuthorId));
-            _context.Books.Add(book);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetBook", new { id = book.Id }, createBookDTO.ToBook());
-        }
-
-        public async Task<ActionResult<Author>> GetAuthor(int id)
-        {
-            var author = await _context.Authors.FindAsync(id);
-
+            Book book = createBookDTO.ToBook();
+            Author author = await GetAuthor(createBookDTO.BookAuthorId);
             if (author == null)
             {
                 return NotFound();
             }
+
+            book.Authors.Add(author);
+            _context.Books.Add(book);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetBook", new { id = book.Id }, book);
+        }
+
+        [HttpGet]
+        private async Task<Author> GetAuthor(int id)
+        {
+            var author = await _context.Authors.FindAsync(id);
 
             return author;
         }

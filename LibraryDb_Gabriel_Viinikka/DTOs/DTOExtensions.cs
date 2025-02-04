@@ -34,6 +34,48 @@
 
         }
 
+        public static BookDTO ToBookDTO(this Book book)
+        {
+            return new BookDTO
+            {
+                Id = book.Id,
+                BookTitle = book.BookTitle,
+                ISBN = book.ISBN,
+                PublicationYear = book.PublicationDate.Year,
+                BookAuthors = book.Authors
+            };
+
+        }
+
+        public static Book ToBook(this CreateBookDTO createBookDTO)
+        {
+            return new Book
+            {
+                BookTitle = createBookDTO.BookTitle,
+                ISBN = createBookDTO.ISBN,
+                PublicationDate = new DateOnly(createBookDTO.PublicationYear, 1, 1),
+                Authors = new List<Author> { }
+            };
+        }
+
+        public static Book ToBook(this BookDTO bookDTO)
+        {
+            return new Book
+            {
+                Id = bookDTO.Id,
+                BookTitle = bookDTO.BookTitle,
+                ISBN = bookDTO.ISBN,
+                PublicationDate = new DateOnly(bookDTO.PublicationYear, 1, 1),
+                Authors = bookDTO.BookAuthors
+            };
+        }
+
+
+
+
+
+
+
 
     }
 
