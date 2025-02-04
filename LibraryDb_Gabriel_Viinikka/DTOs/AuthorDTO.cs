@@ -12,40 +12,5 @@
         public required string AuthorFirstName { get; set; }
         public required string AuthorLastName { get; set; }
     }
-    public static class DTOAuthorExtensions
-    {
-        public static AuthorDTO ToAuthorDTO(this Author author)
-        {
-            return new AuthorDTO
-            {
-                Id = author.Id,
-                AuthorFirstName = author.AuthorFirstName,
-                AuthorLastName = author.AuthorLastName
-            };
-
-        }
-
-        public static Author ToAuthor(this CreateAuthorDTO authorDTO)
-        {
-            return new Author
-            {
-                AuthorFirstName = authorDTO.AuthorFirstName,
-                AuthorLastName = authorDTO.AuthorLastName
-            };
-        }
-
-        public static Author ToAuthor(this AuthorDTO authorDTO)
-        {
-            return new Author
-            {   
-                Id = authorDTO.Id,
-                AuthorFirstName = authorDTO.AuthorFirstName,
-                AuthorLastName = authorDTO.AuthorLastName
-            };
-
-        }
-
-
-    }
 
 }

@@ -75,12 +75,25 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         // POST: api/Books
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Book>> PostBook(Book book)
+        public async Task<ActionResult<Book>> PostBook(CreateBookDTO createBookDTO)
         {
+            Book book = createBookDTO.ToBook(createBookDTO,GetAuthor(createBookDTO.BookAuthorId));
             _context.Books.Add(book);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book.Id }, book);
+            return CreatedAtAction("GetBook", new { id = book.Id }, createBookDTO.ToBook());
+        }
+
+        public async Task<ActionResult<Author>> GetAuthor(int id)
+        {
+            var author = await _context.Authors.FindAsync(id);
+
+            if (author == null)
+            {
+                return NotFound();
+            }
+
+            return author;
         }
 
         // DELETE: api/Books/5
