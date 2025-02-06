@@ -22,9 +22,9 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+        public async Task<ActionResult<IEnumerable<BookDTO>>> GetBooks()
         {
-            return await _context.Books.ToListAsync();
+            return await _context.Books.Select( b => b.ToBookDTO()).ToListAsync();
         }
 
         // GET: api/Books/5
@@ -77,7 +77,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpPost]
         public async Task<ActionResult<Book>> PostBook(CreateBookDTO createBookDTO)
         {
-            Book book = createBookDTO.ToBook();
+            var book = createBookDTO.ToBook();
             Author author = await GetAuthor(createBookDTO.BookAuthorId);
             if (author == null)
             {
@@ -88,7 +88,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
             _context.Books.Add(book);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book.Id }, book);
+            return CreatedAtAction("GetBook", new { id = book.Id }, book.ToBookDTO());
         }
 
         [HttpGet]

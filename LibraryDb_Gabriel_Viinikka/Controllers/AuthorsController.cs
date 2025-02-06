@@ -22,9 +22,9 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
         // GET: api/Authors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
+        public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAuthors()
         {
-            return await _context.Authors.ToListAsync();
+            return await _context.Authors.Select(a => a.ToAuthorDTO()).ToListAsync();
         }
 
         //GET: api/Authors
@@ -38,7 +38,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 return BadRequest();
             }
 
-            List<AuthorDTO> authorDTOs = await _context.Authors
+            List<AuthorDTO>? authorDTOs = await _context.Authors
                 .Where(a => a.AuthorLastName.ToLower().Contains(search) || a.AuthorFirstName.ToLower().Contains(search))
                 .Select(a => a.ToAuthorDTO())
                 .ToListAsync();
@@ -97,7 +97,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpPost]
         public async Task<ActionResult<Author>> PostAuthor(CreateAuthorDTO createAuthorDTO)
         {
-            Author author = createAuthorDTO.ToAuthor();
+            var author = createAuthorDTO.ToAuthor();
 
             _context.Authors.Add(author);
             await _context.SaveChangesAsync();
