@@ -35,7 +35,8 @@
         }
 
         public static BookDTO ToBookDTO(this Book book)
-        {
+        { 
+
             return new BookDTO
             {
                 Id = book.Id,

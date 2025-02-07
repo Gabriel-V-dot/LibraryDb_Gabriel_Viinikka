@@ -78,26 +78,21 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         public async Task<ActionResult<Book>> PostBook(CreateBookDTO createBookDTO)
         {
             var book = createBookDTO.ToBook();
-            Author author = await GetAuthor(createBookDTO.BookAuthorId);
+            var author = await _context.Authors.FindAsync(createBookDTO.BookAuthorId);
             if (author == null)
             {
                 return NotFound();
             }
 
             book.Authors.Add(author);
+            author.Books.Add(book);
             _context.Books.Add(book);
+            //Need to add an put for adding the book to the authors list of books 
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetBook", new { id = book.Id }, book.ToBookDTO());
         }
 
-        [HttpGet]
-        private async Task<Author> GetAuthor(int id)
-        {
-            var author = await _context.Authors.FindAsync(id);
-
-            return author;
-        }
 
         // DELETE: api/Books/5
         [HttpDelete("{id}")]
