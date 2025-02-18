@@ -8,8 +8,8 @@
             return new AuthorDTO
             {
                 Id = author.Id,
-                AuthorFirstName = author.AuthorFirstName,
-                AuthorLastName = author.AuthorLastName
+                AuthorFirstName = author.FirstName,
+                AuthorLastName = author.LastName
             };
 
         }
@@ -18,8 +18,8 @@
         {
             return new Author
             {
-                AuthorFirstName = authorDTO.AuthorFirstName,
-                AuthorLastName = authorDTO.AuthorLastName
+                FirstName = authorDTO.AuthorFirstName,
+                LastName = authorDTO.AuthorLastName
             };
         }
 
@@ -28,8 +28,8 @@
             return new Author
             {   
                 Id = authorDTO.Id,
-                AuthorFirstName = authorDTO.AuthorFirstName,
-                AuthorLastName = authorDTO.AuthorLastName
+                FirstName = authorDTO.AuthorFirstName,
+                LastName = authorDTO.AuthorLastName
             };
 
         }

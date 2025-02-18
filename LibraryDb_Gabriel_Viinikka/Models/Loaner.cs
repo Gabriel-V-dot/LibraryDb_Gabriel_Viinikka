@@ -3,8 +3,9 @@
     public class Loaner()
     {
         public int Id { get; set; }
-        public required string LoanerFirstName { get; set; }
-        public required string LoanerLastName { get; set; }
+        public required string FirstName { get; set; }
+        public required string LastName { get; set; }
+        public required int CardId { get; set; }
 
     }
 

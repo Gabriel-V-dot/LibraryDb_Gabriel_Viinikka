@@ -39,7 +39,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
             }
 
             List<AuthorDTO>? authorDTOs = await _context.Authors
-                .Where(a => a.AuthorLastName.ToLower().Contains(search) || a.AuthorFirstName.ToLower().Contains(search))
+                .Where(a => a.LastName.ToLower().Contains(search) || a.FirstName.ToLower().Contains(search))
                 .Select(a => a.ToAuthorDTO())
                 .ToListAsync();
 
