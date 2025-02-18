@@ -78,7 +78,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         public async Task<ActionResult<Book>> PostBook(CreateBookDTO createBookDTO)
         {
             var book = createBookDTO.ToBook();
-            var author = await _context.Authors.FindAsync(createBookDTO.BookAuthorId);
+            var author = await _context.Authors.FindAsync(createBookDTO.AuthorIds);
             if (author == null)
             {
                 return NotFound();

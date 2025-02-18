@@ -19,7 +19,7 @@
         public required string BookTitle { get; set; }
         public required long ISBN { get; set; }
         public required int PublicationYear { get; set; }
-        public required int BookAuthorId { get; set; }
+        public required List<int> AuthorIds { get; set; }
 
     }
 

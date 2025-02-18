@@ -18,8 +18,8 @@
         {
             return new Author
             {
-                FirstName = authorDTO.AuthorFirstName,
-                LastName = authorDTO.AuthorLastName
+                FirstName = authorDTO.FirstName,
+                LastName = authorDTO.LastName
             };
         }
 

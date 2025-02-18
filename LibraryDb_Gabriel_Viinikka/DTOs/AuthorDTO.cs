@@ -9,8 +9,8 @@
 
     public class CreateAuthorDTO
     {
-        public required string AuthorFirstName { get; set; }
-        public required string AuthorLastName { get; set; }
+        public required string FirstName { get; set; }
+        public required string LastName { get; set; }
     }
 
 }
