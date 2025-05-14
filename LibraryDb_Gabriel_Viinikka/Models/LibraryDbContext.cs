@@ -13,6 +13,8 @@ namespace LibraryDb_Gabriel_Viinikka.Models
         public DbSet<Author> Authors { get; set; }
         public DbSet<Loaner> Loaners { get; set; }
         public DbSet<Loans> DbLoans { get; set; }
+        public DbSet<LoanCard> LoanCards { get; set; }
+        public DbSet<Inventory> InventoryBooks { get; set; }
 
     }
 

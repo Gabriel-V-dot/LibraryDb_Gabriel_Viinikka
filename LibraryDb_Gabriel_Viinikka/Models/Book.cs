@@ -10,8 +10,10 @@
         public required DateOnly PublicationDate { get; set; }
         public List<Author>? Authors { get; set; } = new();
 
-        public int CopiesTotal { get; set; }
-        public int LoanedTotal { get; set; }
+
+        //Suggestion from Benjamin to simplify, due to out of time 
+        //public int CopiesTotal { get; set; }
+        //public int LoanedTotal { get; set; }
     }
 
 }

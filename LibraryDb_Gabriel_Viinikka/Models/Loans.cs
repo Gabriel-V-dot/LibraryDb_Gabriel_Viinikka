@@ -3,11 +3,12 @@
     public class Loans()
     {
         public int Id { get; set; }
-        public required DateOnly LoanedOn {get;set;}
-        public DateOnly? ReturnDueOn { get; set; }
-        public DateOnly? ReturnedOn { get; set; }
-        public required Book Book { get; set; }
-        public required Loaner Loaner { get; set; }
+        public required DateTime LoanDate { get; set; } = DateTime.Now;
+        public DateTime? ExpectedReturnDate { get; set; }
+        public DateTime? ActualReturnDate { get; set; }
+        public required Inventory InventoryBook { get; set; }
+        public required int LoanCardId { get; set; }
+        public required LoanCard LoanCardReference { get; set; }
 
     }
 
