@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryDb_Gabriel_Viinikka.Models;
+using LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions;
+using LibraryDb_Gabriel_Viinikka.DTOs.BookDTOs;
+using LibraryDb_Gabriel_Viinikka.DTOs.AuthorDTOs;
 
 namespace LibraryDb_Gabriel_Viinikka.Controllers
 {
@@ -24,21 +27,45 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookDTO>>> GetBooks()
         {
-            return await _context.Books.Select( b => b.ToBookDTO()).ToListAsync();
+            return await _context.Books.AsNoTracking()
+                .Include(auth => auth.Authors)
+                .Select(b => new BookDTO
+                {
+                    Title = b.Title,
+                    ISBN = b.ISBN,
+                    PublicationYear = b.PublicationDate,
+                    BookAuthors = b.Authors
+                .Select(a => new AuthorDTO
+                {
+                    FirstName = a.FirstName,
+                    LastName = a.LastName
+                })
+                .ToList()
+                }).ToListAsync();
+            //return await _context.Books.Include(auth => auth.Authors).Select( b => b.ToBookDTO()).ToListAsync();
+
         }
 
         // GET: api/Books/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetBook(int id)
         {
-            var book = await _context.Books.FindAsync(id);
-
-            if (book == null)
+            try
             {
-                return NotFound();
-            }
+                var book = await _context.Books.FindAsync(id);
 
-            return book;
+                if (book == null)
+                {
+                    return NotFound();
+                }
+
+                return book;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
 
         // PUT: api/Books/5
@@ -77,20 +104,26 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpPost]
         public async Task<ActionResult<Book>> PostBook(CreateBookDTO createBookDTO)
         {
-            var book = createBookDTO.ToBook();
-            var author = await _context.Authors.FindAsync(createBookDTO.AuthorIds);
-            if (author == null)
+            try
             {
-                return NotFound();
+                List<Author> authors = _context.Authors.Where(auth => createBookDTO.AuthorIds.Contains(auth.Id)).ToList();
+
+
+                var book = createBookDTO.ToBook(authors);
+
+                _context.Books.Add(book);
+                //Need to add an put for adding the book to the authors list of books 
+                await _context.SaveChangesAsync();
+
+                List<AuthorDTO> authorsDtos = book.Authors.Select(auth => auth.ToAuthorDTO()).ToList();
+
+                return CreatedAtAction("GetBook", new { id = book.Id }, book.ToBookDTO(authorsDtos));
             }
-
-            book.Authors.Add(author);
-            author.Books.Add(book);
-            _context.Books.Add(book);
-            //Need to add an put for adding the book to the authors list of books 
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetBook", new { id = book.Id }, book.ToBookDTO());
+            catch(Exception ex) 
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
 
 

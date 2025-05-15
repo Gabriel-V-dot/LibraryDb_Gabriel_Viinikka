@@ -6,6 +6,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryDb_Gabriel_Viinikka.Models;
+using LibraryDb_Gabriel_Viinikka.DTOs.AuthorDTOs;
+using LibraryDb_Gabriel_Viinikka.DTOs.BookDTOs;
+using LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions;
+using Humanizer;
+using System.Reflection;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Blazor;
 
 namespace LibraryDb_Gabriel_Viinikka.Controllers
 {
@@ -24,7 +30,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAuthors()
         {
-            return await _context.Authors.Select(a => a.ToAuthorDTO()).ToListAsync();
+            return await _context.Authors.Include(book => book.Books).Select(a => a.ToAuthorDTO()).ToListAsync();
         }
 
         //GET: api/Authors
@@ -35,7 +41,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
             if (string.IsNullOrEmpty(search))
             {
-                return BadRequest();
+                return BadRequest("No search parameter found");
             }
 
             List<AuthorDTO>? authorDTOs = await _context.Authors
@@ -43,6 +49,10 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 .Select(a => a.ToAuthorDTO())
                 .ToListAsync();
 
+            if(authorDTOs == null || authorDTOs.Count == 0)
+            {
+                return NotFound();
+            }
 
             return authorDTOs;
         }
@@ -97,12 +107,21 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpPost]
         public async Task<ActionResult<Author>> PostAuthor(CreateAuthorDTO createAuthorDTO)
         {
-            var author = createAuthorDTO.ToAuthor();
+            if (createAuthorDTO == null)
+            {
+                return BadRequest();
+            }
+
+            // list of bookIds => list of Book
+
+            List<Book> books = _context.Books.AsNoTracking().Where(bId => createAuthorDTO.BookId.Contains(bId.Id)).ToList();
+            var author = createAuthorDTO.ToAuthor(books);
 
             _context.Authors.Add(author);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetAuthor", new { id = author.Id }, author.ToAuthorDTO());
+
         }
 
         // DELETE: api/Authors/5
@@ -115,10 +134,18 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 return NotFound();
             }
 
-            _context.Authors.Remove(author);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Authors.Remove(author);
+                await _context.SaveChangesAsync();
 
-            return NoContent();
+                return Ok($"author with id: {id} removed succesfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
 
         private bool AuthorExists(int id)

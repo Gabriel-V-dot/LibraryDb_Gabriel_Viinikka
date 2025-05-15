@@ -16,6 +16,23 @@ namespace LibraryDb_Gabriel_Viinikka.Models
         public DbSet<LoanCard> LoanCards { get; set; }
         public DbSet<Inventory> InventoryBooks { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Book>()
+                .HasIndex(b => b.ISBN)
+                .IsUnique();
+
+
+        }
+
+
+
+
     }
 
-}
+
+ 
+
+    }
