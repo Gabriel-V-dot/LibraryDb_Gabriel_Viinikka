@@ -9,6 +9,7 @@ using LibraryDb_Gabriel_Viinikka.Models;
 using LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions;
 using LibraryDb_Gabriel_Viinikka.DTOs.BookDTOs;
 using LibraryDb_Gabriel_Viinikka.DTOs.AuthorDTOs;
+using Humanizer;
 
 namespace LibraryDb_Gabriel_Viinikka.Controllers
 {
@@ -65,6 +66,53 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
             {
                 Console.WriteLine(ex.Message);
                 return BadRequest(ex.Message);
+            }
+        }
+
+        //GET: api/Books/5
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<BookDTO>>> SearchBooks(string search)
+        {
+            try
+            {
+                search = search.ToLower();
+
+                if (string.IsNullOrEmpty(search))
+                {
+                    return BadRequest("No search parameter found");
+                }
+
+                List<BookDTO> bookDtos = await _context.Books
+                    .Where(book => book.Title.ToLower().Contains(search))
+                    .Select(book => new BookDTO
+                    {
+                        Title = book.Title,
+                        ISBN = book.ISBN,
+                        PublicationYear = book.PublicationDate,
+                        BookAuthors = book.Authors
+                        .Select(author => new AuthorDTO
+                        {
+                            FirstName = author.FirstName,
+                            LastName = author.LastName
+                        }).ToList()
+                    }).ToListAsync();
+
+                //await _context.Authors
+                //.Where(a => a.LastName.ToLower().Contains(search) || a.FirstName.ToLower().Contains(search))
+                //.Select(a => a.ToAuthorDTO())
+                //.ToListAsync();
+
+                if (bookDtos == null || bookDtos.Count == 0)
+                {
+                    return NotFound();
+                }
+
+                return bookDtos;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed in bookSearch {ex.Message}");
+                return BadRequest($"Failed in BookSearch {ex.Message}");
             }
         }
 
@@ -131,16 +179,33 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
-            var book = await _context.Books.FindAsync(id);
-            if (book == null)
+            try
             {
-                return NotFound();
+                var book = await _context.Books.FindAsync(id);
+                if (book == null)
+                {
+                    return NotFound();
+                }
+
+                var bookDTO = new BookDTO
+                {
+                    Title = book.Title,
+                    ISBN = book.ISBN,
+                    PublicationYear = book.PublicationDate,
+                    BookAuthors = book.Authors.Select(auth => auth.ToAuthorDTO()).ToList()
+                };
+
+                Console.WriteLine(book);
+                _context.Books.Remove(book);
+                await _context.SaveChangesAsync();
+
+                return Ok($"Book: {bookDTO} with id: {id} removed succesfully");
             }
-
-            _context.Books.Remove(book);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
 
         private bool BookExists(int id)
