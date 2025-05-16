@@ -181,7 +181,9 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         {
             try
             {
-                var book = await _context.Books.FindAsync(id);
+               // var book = await _context.Books.FindAsync(id).Include(auth => auth.Authors);
+
+                var book = await _context.Books.Where(book =>book.Id == id).Include(auth => auth.Authors).FirstOrDefaultAsync();
                 if (book == null)
                 {
                     return NotFound();
@@ -199,7 +201,8 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 _context.Books.Remove(book);
                 await _context.SaveChangesAsync();
 
-                return Ok($"Book: {bookDTO} with id: {id} removed succesfully");
+                return Ok($"Book: {bookDTO.Title} \n Author: {bookDTO.BookAuthors[0].FirstName} {bookDTO.BookAuthors[0].LastName} \n with id: {id} removed succesfully");
+              
             }
             catch (Exception ex)
             {

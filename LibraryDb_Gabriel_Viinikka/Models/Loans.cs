@@ -4,8 +4,7 @@
     {
         public int Id { get; set; }
         public required DateTime LoanDate { get; set; } = DateTime.Now;
-        public DateTime? ExpectedReturnDate { get; set; }
-        public DateTime? ActualReturnDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
         public required Inventory InventoryBook { get; set; }
         public required int LoanCardId { get; set; }
         public required LoanCard LoanCardReference { get; set; }
