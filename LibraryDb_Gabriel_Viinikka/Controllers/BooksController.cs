@@ -22,6 +22,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         public BooksController(LibraryDbContext context)
         {
             _context = context;
+        
         }
 
         // GET: api/Books

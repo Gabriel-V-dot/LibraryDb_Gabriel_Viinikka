@@ -40,12 +40,32 @@ namespace LibraryDb_Gabriel_Viinikka.Models
                 .HasMaxLength(100);
 
             modelBuilder.Entity<Book>()
+                .Property(b => b.ISBN)
+                .HasColumnType("nvarchar(13)")
+                .HasMaxLength(13);
+
+            modelBuilder.Entity<Book>()
                 .ToTable(b => b.HasCheckConstraint("CK_Book_ISBN_Length", "LEN(ISBN) IN (10,13)"));
 
             modelBuilder.Entity<Book>()
                 .HasIndex(b => b.ISBN)
                 .IsUnique();
             #endregion
+
+            #region Loaner
+
+            modelBuilder.Entity<Loaner>()
+                .Property(l => l.FirstName)
+                .HasColumnType("nvarchar(60)")
+                .HasMaxLength(60);
+
+            modelBuilder.Entity<Loaner>()
+                .Property(l => l.LastName)
+                .HasColumnType("nvarchar(100)")
+                .HasMaxLength(100);
+
+            #endregion
+
 
             #region Rating
             modelBuilder.Entity<Rating>()

@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryDb_Gabriel_Viinikka", "LibraryDb_Gabriel_Viinikka\LibraryDb_Gabriel_Viinikka.csproj", "{311FEDD3-588B-431F-A65C-F68619724BF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidatorTest.Tests", "ValidatorTest.Tests\ValidatorTest.Tests.csproj", "{BD50073B-EB36-4776-9BFA-2C85E77A3A41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{311FEDD3-588B-431F-A65C-F68619724BF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{311FEDD3-588B-431F-A65C-F68619724BF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{311FEDD3-588B-431F-A65C-F68619724BF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD50073B-EB36-4776-9BFA-2C85E77A3A41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD50073B-EB36-4776-9BFA-2C85E77A3A41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD50073B-EB36-4776-9BFA-2C85E77A3A41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD50073B-EB36-4776-9BFA-2C85E77A3A41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4E812584-6A5A-4B29-856E-5618BF649ACE}
 	EndGlobalSection
 EndGlobal
