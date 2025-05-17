@@ -20,10 +20,43 @@ namespace LibraryDb_Gabriel_Viinikka.Models
         {
             base.OnModelCreating(modelBuilder);
 
+            #region Author
+            modelBuilder.Entity<Author>()
+                .Property(a => a.FirstName)
+                .HasColumnType("nvarchar(60)")
+                .HasMaxLength(60);
+
+            modelBuilder.Entity<Author>()
+                .Property(a => a.LastName)
+                .HasColumnType("nvarchar(100)")
+                .HasMaxLength(100);
+
+            #endregion
+
+            #region Book
+            modelBuilder.Entity<Book>()
+                .Property(b => b.Title)
+                .HasColumnType("nvarchar(100)")
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<Book>()
+                .ToTable(b => b.HasCheckConstraint("CK_Book_ISBN_Length", "LEN(ISBN) IN (10,13)"));
+
             modelBuilder.Entity<Book>()
                 .HasIndex(b => b.ISBN)
                 .IsUnique();
+            #endregion
 
+            #region Rating
+            modelBuilder.Entity<Rating>()
+                .ToTable(s => s.HasCheckConstraint("CK_Rating_ScoreRange", "[Score] BETWEEN 1 AND 5"));
+
+            modelBuilder
+                .Entity<Rating>()
+                .Property(c => c.Comment)
+                .HasColumnType("nvarchar(100)")
+                .HasMaxLength(100);
+            #endregion
 
         }
 

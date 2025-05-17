@@ -8,7 +8,7 @@ namespace LibraryDb_Gabriel_Viinikka.Models
         public int Id { get; set; }
         public required string Title { get; set; }
 
-        public required long ISBN { get; set; }
+        public required string ISBN { get; set; }
 
         public required DateOnly PublicationDate { get; set; }
         public required List<Author> Authors { get; set; }

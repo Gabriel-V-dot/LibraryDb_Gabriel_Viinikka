@@ -6,7 +6,7 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.BookDTOs
     {
         public required string Title { get; set; }
 
-        public required long ISBN { get; set; }
+        public required string ISBN { get; set; }
 
         public required DateOnly PublicationYear { get; set; }
 
