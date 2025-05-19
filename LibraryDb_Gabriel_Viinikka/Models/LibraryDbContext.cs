@@ -14,7 +14,8 @@ namespace LibraryDb_Gabriel_Viinikka.Models
         public DbSet<Loaner> Loaners { get; set; }
         public DbSet<Loans> DbLoans { get; set; }
         public DbSet<LoanCard> LoanCards { get; set; }
-        public DbSet<Inventory> InventoryBooks { get; set; }
+        public DbSet<Inventory> Inventory { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -68,6 +69,10 @@ namespace LibraryDb_Gabriel_Viinikka.Models
                 .Property(l => l.LastName)
                 .HasColumnType("nvarchar(100)")
                 .HasMaxLength(100);
+
+            #endregion
+
+            #region LoanCard
 
             #endregion
 

@@ -1,6 +1,5 @@
 ﻿using LibraryDb_Gabriel_Viinikka.DTOs.AuthorDTOs;
 using LibraryDb_Gabriel_Viinikka.Models;
-using LibraryDb_Gabriel_Viinikka.DTOs.BookDTOs;
 
 namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
 {

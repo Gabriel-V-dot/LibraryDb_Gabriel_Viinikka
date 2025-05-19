@@ -27,7 +27,7 @@ namespace LibraryDb_Gabriel_Viinikka
             var connectionString = builder.Configuration.GetConnectionString("BooksDb");
             builder.Services.AddDbContext<LibraryDbContext>(options =>
             {
-                options.UseSqlServer(connectionString).LogTo(message => Debug.WriteLine(message)).EnableSensitiveDataLogging();
+                options.UseSqlServer(connectionString).LogTo(message => Debug.WriteLine(message)).EnableSensitiveDataLogging().EnableDetailedErrors();
             });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

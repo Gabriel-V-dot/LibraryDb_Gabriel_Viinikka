@@ -4,6 +4,7 @@ using LibraryDb_Gabriel_Viinikka.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryDb_Gabriel_Viinikka.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    partial class LibraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250519170030_Refactor_loaners_Table")]
+    partial class Refactor_loaners_Table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,6 +166,10 @@ namespace LibraryDb_Gabriel_Viinikka.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.PrimitiveCollection<string>("CardId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(60)
@@ -275,7 +282,7 @@ namespace LibraryDb_Gabriel_Viinikka.Migrations
             modelBuilder.Entity("LibraryDb_Gabriel_Viinikka.Models.LoanCard", b =>
                 {
                     b.HasOne("LibraryDb_Gabriel_Viinikka.Models.Loaner", "LoanerReference")
-                        .WithMany()
+                        .WithMany("CardReference")
                         .HasForeignKey("LoanerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -300,6 +307,11 @@ namespace LibraryDb_Gabriel_Viinikka.Migrations
                     b.Navigation("InventoryBook");
 
                     b.Navigation("LoanCardReference");
+                });
+
+            modelBuilder.Entity("LibraryDb_Gabriel_Viinikka.Models.Loaner", b =>
+                {
+                    b.Navigation("CardReference");
                 });
 #pragma warning restore 612, 618
         }

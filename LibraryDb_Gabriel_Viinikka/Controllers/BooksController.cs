@@ -158,7 +158,8 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         {
             try
             {
-                if (!_validator.Validate(createBookDTO.ISBN)) return BadRequest("This is not a valid ISBN");
+                string message = createBookDTO.ISBN.Length == 9 ? " If this is an old book printed before 1974 you can enter a zero before the SBN to make it compatible with ISBN" : "";
+                if (!_validator.Validate(createBookDTO.ISBN)) return BadRequest("This is not a valid ISBN" + message);
 
                 List<Author> authors = _context.Authors.Where(auth => createBookDTO.AuthorIds.Contains(auth.Id)).ToList();
 

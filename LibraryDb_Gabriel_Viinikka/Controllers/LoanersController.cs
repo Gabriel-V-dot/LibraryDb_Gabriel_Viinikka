@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryDb_Gabriel_Viinikka.Models;
+using System.Diagnostics;
+using Humanizer;
+using LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions;
+using LibraryDb_Gabriel_Viinikka.DTOs.LoanerDTOs;
 
 namespace LibraryDb_Gabriel_Viinikka.Controllers
 {
@@ -77,10 +81,19 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpPost]
         public async Task<ActionResult<Loaner>> PostLoaner(Loaner loaner)
         {
-            _context.Loaners.Add(loaner);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Loaners.Add(loaner);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetLoaner", new { id = loaner.Id }, loaner);
+                return CreatedAtAction("GetLoaner", new { id = loaner.Id }, loaner);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/Loaners/5
