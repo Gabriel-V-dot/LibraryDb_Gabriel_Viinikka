@@ -50,6 +50,11 @@ namespace LibraryDb_Gabriel_Viinikka.Models
             modelBuilder.Entity<Book>()
                 .HasIndex(b => b.ISBN)
                 .IsUnique();
+
+            modelBuilder.Entity<Book>()
+                .HasMany(b => b.Ratings)
+                .WithMany(r => r.Books);
+
             #endregion
 
             #region Loaner
@@ -74,8 +79,8 @@ namespace LibraryDb_Gabriel_Viinikka.Models
             modelBuilder
                 .Entity<Rating>()
                 .Property(c => c.Comment)
-                .HasColumnType("nvarchar(100)")
-                .HasMaxLength(100);
+                .HasColumnType("nvarchar(256)")
+                .HasMaxLength(256);
             #endregion
 
         }

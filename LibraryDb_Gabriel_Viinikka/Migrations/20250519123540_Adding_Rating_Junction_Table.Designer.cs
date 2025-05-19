@@ -4,6 +4,7 @@ using LibraryDb_Gabriel_Viinikka.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryDb_Gabriel_Viinikka.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    partial class LibraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250519123540_Adding_Rating_Junction_Table")]
+    partial class Adding_Rating_Junction_Table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,9 +79,6 @@ namespace LibraryDb_Gabriel_Viinikka.Migrations
                     b.Property<DateOnly>("PublicationDate")
                         .HasColumnType("date");
 
-                    b.Property<int?>("RatingId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -88,8 +88,6 @@ namespace LibraryDb_Gabriel_Viinikka.Migrations
 
                     b.HasIndex("ISBN")
                         .IsUnique();
-
-                    b.HasIndex("RatingId");
 
                     b.ToTable("Books", t =>
                         {
@@ -240,13 +238,6 @@ namespace LibraryDb_Gabriel_Viinikka.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("LibraryDb_Gabriel_Viinikka.Models.Book", b =>
-                {
-                    b.HasOne("LibraryDb_Gabriel_Viinikka.Models.Rating", null)
-                        .WithMany("Books")
-                        .HasForeignKey("RatingId");
-                });
-
             modelBuilder.Entity("LibraryDb_Gabriel_Viinikka.Models.Inventory", b =>
                 {
                     b.HasOne("LibraryDb_Gabriel_Viinikka.Models.Book", "BookReference")
@@ -292,11 +283,6 @@ namespace LibraryDb_Gabriel_Viinikka.Migrations
                 {
                     b.Navigation("CardReference")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("LibraryDb_Gabriel_Viinikka.Models.Rating", b =>
-                {
-                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }

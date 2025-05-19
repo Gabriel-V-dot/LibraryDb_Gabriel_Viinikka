@@ -10,6 +10,7 @@ using LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions;
 using LibraryDb_Gabriel_Viinikka.DTOs.BookDTOs;
 using LibraryDb_Gabriel_Viinikka.DTOs.AuthorDTOs;
 using Humanizer;
+using LibraryDb_Gabriel_Viinikka.Services;
 
 namespace LibraryDb_Gabriel_Viinikka.Controllers
 {
@@ -18,10 +19,12 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
     public class BooksController : ControllerBase
     {
         private readonly LibraryDbContext _context;
+        private readonly IsbnValidator _validator;
 
         public BooksController(LibraryDbContext context)
         {
             _context = context;
+            _validator = new IsbnValidator();
         
         }
 
@@ -155,6 +158,8 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         {
             try
             {
+                if (!_validator.Validate(createBookDTO.ISBN)) return BadRequest("This is not a valid ISBN");
+
                 List<Author> authors = _context.Authors.Where(auth => createBookDTO.AuthorIds.Contains(auth.Id)).ToList();
 
 

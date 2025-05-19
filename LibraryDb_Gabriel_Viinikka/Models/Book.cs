@@ -11,7 +11,9 @@ namespace LibraryDb_Gabriel_Viinikka.Models
         public required string ISBN { get; set; }
 
         public required DateOnly PublicationDate { get; set; }
-        public required List<Author> Authors { get; set; }
+        public required ICollection<Author> Authors { get; set; }
+
+        public ICollection<Rating> Ratings { get; set; } = [];
 
 
         //Suggestion from Benjamin to simplify, due to out of time 
