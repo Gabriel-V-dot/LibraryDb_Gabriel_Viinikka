@@ -56,6 +56,20 @@ namespace LibraryDb_Gabriel_Viinikka.Services
         {
             bool valid = false;
 
+            int counter = 10;
+            int checkSum = 0;
+            foreach(char number in isbn)
+            {
+                bool parsed = int.TryParse(number.ToString(), out int parsedNumber);
+
+                checkSum += parsedNumber * counter;
+
+                counter--;
+            }
+
+            Math.DivRem(checkSum, 11, out int remainder);
+
+            if (remainder == 0) valid = true;
 
 
             return valid;
