@@ -40,7 +40,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                     ISBN = b.ISBN,
                     PublicationYear = b.PublicationDate,
                     BookAuthors = b.Authors
-                .Select(a => new AuthorDTO
+                .Select(a => new MinimalAuthorDTO
                 {
                     FirstName = a.FirstName,
                     LastName = a.LastName
@@ -94,7 +94,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                         ISBN = book.ISBN,
                         PublicationYear = book.PublicationDate,
                         BookAuthors = book.Authors
-                        .Select(author => new AuthorDTO
+                        .Select(author => new MinimalAuthorDTO
                         {
                             FirstName = author.FirstName,
                             LastName = author.LastName
@@ -162,16 +162,16 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
                 List<Author> authors = _context.Authors.Where(auth => createBookDTO.AuthorIds.Contains(auth.Id)).ToList();
 
-
-                var book = createBookDTO.ToBook(authors);
+                var book = createBookDTO.ToBook(authors,[]);
 
                 _context.Books.Add(book);
                 //Need to add an put for adding the book to the authors list of books 
                 await _context.SaveChangesAsync();
 
-                List<AuthorDTO> authorsDtos = book.Authors.Select(auth => auth.ToAuthorDTO()).ToList();
+                List<MinimalAuthorDTO> authorsDtos = book.Authors.Select(auth => auth.ToMinimalAuthorDTO()).ToList();
 
-                return CreatedAtAction("GetBook", new { id = book.Id }, book.ToBookDTO(authorsDtos));
+
+                return CreatedAtAction("GetBook", new { id = book.Id }, book.ToBookDTO(authorsDtos, []));
             }
             catch(Exception ex) 
             {
@@ -200,7 +200,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                     Title = book.Title,
                     ISBN = book.ISBN,
                     PublicationYear = book.PublicationDate,
-                    BookAuthors = book.Authors.Select(auth => auth.ToAuthorDTO()).ToList()
+                    BookAuthors = book.Authors.Select(auth => auth.ToMinimalAuthorDTO()).ToList()
                 };
 
                 Console.WriteLine(book);

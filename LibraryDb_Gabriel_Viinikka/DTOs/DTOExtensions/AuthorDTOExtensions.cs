@@ -7,8 +7,15 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
     public static class AuthorDTOExtensions
     {
 
+        public static MinimalAuthorDTO ToMinimalAuthorDTO(this Author author) => new MinimalAuthorDTO
+        { 
+            FirstName = author.FirstName,
+            LastName = author.LastName
+        };
+
         public static AuthorDTO ToAuthorDTO(this Author author) => new AuthorDTO
-        {
+        { 
+            Id = author.Id,
             FirstName = author.FirstName,
             LastName = author.LastName
         };

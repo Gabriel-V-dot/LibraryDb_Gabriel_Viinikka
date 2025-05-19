@@ -2,9 +2,8 @@
 
 namespace LibraryDb_Gabriel_Viinikka.DTOs.AuthorDTOs
 {
-    public class AuthorDTO
+    public class MinimalAuthorDTO
     {
-        public int Id { get; set; }
         public required string FirstName { get; set; }
         public required string LastName {get; set; }
     }

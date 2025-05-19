@@ -35,7 +35,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
         //GET: api/Authors
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<AuthorDTO>>> SearchAuthors(string search)
+        public async Task<ActionResult<IEnumerable<MinimalAuthorDTO>>> SearchAuthors(string search)
         {
             search = search.ToLower();
 
@@ -44,9 +44,9 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 return BadRequest("No search parameter found");
             }
 
-            List<AuthorDTO>? authorDTOs = await _context.Authors
+            List<MinimalAuthorDTO>? authorDTOs = await _context.Authors
                 .Where(a => a.LastName.ToLower().Contains(search) || a.FirstName.ToLower().Contains(search))
-                .Select(a => a.ToAuthorDTO())
+                .Select(a => a.ToMinimalAuthorDTO())
                 .ToListAsync();
 
             if(authorDTOs == null || authorDTOs.Count == 0)
@@ -105,7 +105,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         // POST: api/Authors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Author>> PostAuthor(CreateAuthorDTO createAuthorDTO)
+        public async Task<ActionResult<AuthorDTO>> PostAuthor(CreateAuthorDTO createAuthorDTO)
         {
             if (createAuthorDTO == null)
             {
