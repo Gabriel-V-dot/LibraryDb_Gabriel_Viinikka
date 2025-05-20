@@ -6,6 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryDb_Gabriel_Viinikka.Models;
+using LibraryDb_Gabriel_Viinikka.DTOs.LoanCardDTOs;
+using Microsoft.IdentityModel.Abstractions;
+using Humanizer;
+using LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions;
+using System.Diagnostics;
 
 namespace LibraryDb_Gabriel_Viinikka.Controllers
 {
@@ -75,28 +80,54 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         // POST: api/LoanCards
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<LoanCard>> PostLoanCard(LoanCard loanCard)
+        public async Task<ActionResult<LoanCard>> PostLoanCard(CreateLoanCardDTO createLoanCard)
         {
-            _context.LoanCards.Add(loanCard);
-            await _context.SaveChangesAsync();
+            try
+            {
+                Loaner? loaner = await _context.Loaners.FindAsync(createLoanCard.LoanerId);
+                if (loaner == null) return NotFound();
 
-            return CreatedAtAction("GetLoanCard", new { id = loanCard.Id }, loanCard);
+                LoanCard loanCard = loaner.LoanerToLoanCard();
+
+                _context.LoanCards.Add(loanCard);
+                await _context.SaveChangesAsync();
+
+                LoanCardDTO loanCardDTO = loanCard.LoanCardToLoanCardDTO();
+
+                return CreatedAtAction("GetLoanCard", new { id = loanCardDTO.Id }, loanCardDTO);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/LoanCards/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLoanCard(int id)
         {
-            var loanCard = await _context.LoanCards.FindAsync(id);
-            if (loanCard == null)
+            try
             {
-                return NotFound();
+                var loanCard = await _context.LoanCards.Where(lc => lc.Id == id).Include(lc => lc.Loaner).FirstAsync();
+                if (loanCard == null)
+                {
+                    return NotFound();
+                }
+
+                LoanCardDTO loanCardDTO = loanCard.LoanCardToLoanCardDTO();
+
+                _context.LoanCards.Remove(loanCard);
+                await _context.SaveChangesAsync();
+
+                return Ok($"Loancard: \n id: {loanCardDTO.Id}\n Name: {loanCardDTO.Loaner.FirstName}\n LastName: {loanCardDTO.Loaner.LastName} \n\nwas succesfully removed");
             }
-
-            _context.LoanCards.Remove(loanCard);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex) 
+            {
+                Debug.WriteLine(ex.Message);
+                return BadRequest(ex.Message +"\n"+ ex.StackTrace);
+            }
         }
 
         private bool LoanCardExists(int id)
