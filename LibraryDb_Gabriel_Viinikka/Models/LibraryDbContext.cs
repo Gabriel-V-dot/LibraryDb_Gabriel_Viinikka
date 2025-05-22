@@ -58,6 +58,16 @@ namespace LibraryDb_Gabriel_Viinikka.Models
 
             #endregion
 
+            #region Inventory
+
+            modelBuilder.Entity<Inventory>()
+                .HasOne(i => i.Book)
+                .WithMany(b => b.Inventories)
+                .HasForeignKey(i => i.BookId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            #endregion
+
             #region Loaner
 
             modelBuilder.Entity<Loaner>()

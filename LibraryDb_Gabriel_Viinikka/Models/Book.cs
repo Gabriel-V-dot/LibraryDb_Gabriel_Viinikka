@@ -14,6 +14,7 @@ namespace LibraryDb_Gabriel_Viinikka.Models
         public required ICollection<Author> Authors { get; set; }
 
         public ICollection<Rating> Ratings { get; set; } = [];
+        public ICollection<Inventory> Inventories { get; set; } = [];
 
 
         //Suggestion from Benjamin to simplify, due to out of time 
