@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Abstractions;
 using Humanizer;
 using LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions;
 using System.Diagnostics;
+using NuGet.Versioning;
 
 namespace LibraryDb_Gabriel_Viinikka.Controllers
 {
@@ -27,23 +28,25 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
         // GET: api/LoanCards
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LoanCard>>> GetLoanCards()
+        public async Task<ActionResult<IEnumerable<LoanCardDTO>>> GetLoanCards()
         {
-            return await _context.LoanCards.ToListAsync();
+            List<LoanCardDTO> loanCardDTOs = await _context.LoanCards.AsNoTracking().Include(lc => lc.Loaner).Select(lc => lc.LoanCardToLoanCardDTO()).ToListAsync();
+
+            return loanCardDTOs;
         }
 
         // GET: api/LoanCards/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<LoanCard>> GetLoanCard(int id)
+        public async Task<ActionResult<LoanCardDTO>> GetLoanCard(int id)
         {
-            var loanCard = await _context.LoanCards.FindAsync(id);
+            var loanCardDTO = await _context.LoanCards.AsNoTracking().Include(lc => lc.Loaner).Where(lc => lc.Id == id).Select(lc => lc.LoanCardToLoanCardDTO()).FirstOrDefaultAsync();
 
-            if (loanCard == null)
+            if (loanCardDTO == null)
             {
                 return NotFound();
             }
 
-            return loanCard;
+            return loanCardDTO;
         }
 
         // PUT: api/LoanCards/5
@@ -121,7 +124,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 _context.LoanCards.Remove(loanCard);
                 await _context.SaveChangesAsync();
 
-                return Ok($"Loancard: \n id: {loanCardDTO.Id}\n Name: {loanCardDTO.Loaner.FirstName}\n LastName: {loanCardDTO.Loaner.LastName} \n\nwas succesfully removed");
+                return Ok($"Loancard: \n id: {loanCardDTO.Id}\n Name: {loanCardDTO.Loaner?.FirstName}\n LastName: {loanCardDTO.Loaner?.LastName} \n\nwas succesfully removed");
             }
             catch (Exception ex) 
             {

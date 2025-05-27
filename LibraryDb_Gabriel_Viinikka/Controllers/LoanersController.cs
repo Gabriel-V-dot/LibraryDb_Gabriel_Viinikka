@@ -79,10 +79,11 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         // POST: api/Loaners
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Loaner>> PostLoaner(Loaner loaner)
+        public async Task<ActionResult<Loaner>> PostLoaner(CreateLoanerDTO createLoanerDTO)
         {
             try
             {
+                var loaner = createLoanerDTO.ToLoaner();
                 _context.Loaners.Add(loaner);
                 await _context.SaveChangesAsync();
 

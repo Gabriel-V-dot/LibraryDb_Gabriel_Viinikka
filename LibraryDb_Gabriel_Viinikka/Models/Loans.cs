@@ -5,10 +5,10 @@
         public int Id { get; set; }
         public required DateTime LoanDate { get; set; } = DateTime.Now;
         public DateTime? ReturnDate { get; set; }
-        public required Inventory InventoryBook { get; set; }
-        public int InventoryId { get; set; }
-        public required int LoanCardId { get; set; }
-        public required LoanCard LoanCardReference { get; set; }
+        public Inventory? InventoryBook { get; set; }
+        public int? InventoryId { get; set; }
+        public int? LoanCardId { get; set; }
+        public LoanCard? LoanCard { get; set; }
 
     }
 

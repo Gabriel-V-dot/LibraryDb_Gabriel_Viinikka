@@ -22,7 +22,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
         // GET: api/Loans
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Loans>>> GetDbLoans()
+        public async Task<ActionResult<IEnumerable<LoansDTO>>> GetDbLoans()
         {
             return await _context.DbLoans.ToListAsync();
         }

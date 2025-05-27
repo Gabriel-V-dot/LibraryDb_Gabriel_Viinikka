@@ -6,16 +6,27 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
 {
     public static class LoanerDTOExtensions
     {
-        public static LoanerDTO ToLoanerDTO(this Loaner loaner)
+        public static CreateLoanerDTO? ToCreateLoanerDTO(this Loaner loaner)
         {
 
-            return new LoanerDTO
+            if (loaner == null) return null;
+
+            return new CreateLoanerDTO
             {
                 FirstName = loaner.FirstName,
                 LastName = loaner.LastName
             };
 
 
+        }
+
+        public static Loaner ToLoaner(this CreateLoanerDTO createLoanerDTO)
+        {
+            return new Loaner
+            {
+                FirstName = createLoanerDTO.FirstName,
+                LastName = createLoanerDTO.LastName
+            };
         }
 
     }

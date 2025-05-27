@@ -84,6 +84,8 @@ namespace LibraryDb_Gabriel_Viinikka.Models
 
             #region LoanCard
 
+            
+
             #endregion
 
 
@@ -96,6 +98,7 @@ namespace LibraryDb_Gabriel_Viinikka.Models
                 .Property(c => c.Comment)
                 .HasColumnType("nvarchar(256)")
                 .HasMaxLength(256);
+
             #endregion
 
         }

@@ -17,13 +17,13 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
                 IsActive = true
             };
         }
-        
-        public static LoanCardDTO   LoanCardToLoanCardDTO(this LoanCard loanCard)
+
+        public static LoanCardDTO LoanCardToLoanCardDTO(this LoanCard loanCard)
         {
             return new LoanCardDTO
             {
                 Id = loanCard.Id,
-                Loaner = loanCard.Loaner.ToLoanerDTO(),
+                Loaner = loanCard.Loaner?.ToCreateLoanerDTO(),
                 ExpirationDate = DateOnly.FromDateTime(loanCard.ExpirationDate),
                 IsActive = loanCard.IsActive
             };
