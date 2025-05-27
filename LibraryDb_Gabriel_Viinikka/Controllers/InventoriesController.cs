@@ -24,14 +24,14 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
         // GET: api/Inventories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Inventory>>> GetInventory()
+        public async Task<ActionResult<IEnumerable<InventoryDTO>>> GetInventory()
         {
-            return await _context.Inventory.Include(i => i.Book).ToListAsync();
+            return await _context.Inventory.Include(i => i.Book).Select(i => i.InventoryToInventoryDTO(i.Book)).ToListAsync();
         }
 
         // GET: api/Inventories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Inventory>> GetInventory(int id)
+        public async Task<ActionResult<InventoryDTO>> GetInventory(int id)
         {
             var inventory = await _context.Inventory.Where(i => i.Id == id).Include(i => i.Book).FirstAsync();
 
@@ -40,7 +40,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 return NotFound();
             }
 
-            return inventory;
+            return inventory.InventoryToInventoryDTO(inventory.Book);
         }
 
         // PUT: api/Inventories/5

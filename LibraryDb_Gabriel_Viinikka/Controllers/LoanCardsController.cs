@@ -28,16 +28,16 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
         // GET: api/LoanCards
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LoanCardDTO>>> GetLoanCards()
+        public async Task<ActionResult<IEnumerable<DTOs.LoanCardDTOs.LoanCardDTO>>> GetLoanCards()
         {
             List<LoanCardDTO> loanCardDTOs = await _context.LoanCards.AsNoTracking().Include(lc => lc.Loaner).Select(lc => lc.LoanCardToLoanCardDTO()).ToListAsync();
-
+            List<LoanCardDTO> loanCardDTOs2 = await _context.LoanCards.AsNoTracking().Include(loanCard => loanCard.Loaner).Select(loanCard => loanCard.LoanCardToLoanCardDTO()).ToListAsync();
             return loanCardDTOs;
         }
 
         // GET: api/LoanCards/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<LoanCardDTO>> GetLoanCard(int id)
+        public async Task<ActionResult<DTOs.LoanCardDTOs.LoanCardDTO>> GetLoanCard(int id)
         {
             var loanCardDTO = await _context.LoanCards.AsNoTracking().Include(lc => lc.Loaner).Where(lc => lc.Id == id).Select(lc => lc.LoanCardToLoanCardDTO()).FirstOrDefaultAsync();
 
@@ -83,7 +83,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         // POST: api/LoanCards
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<LoanCard>> PostLoanCard(CreateLoanCardDTO createLoanCard)
+        public async Task<ActionResult<LoanCardDTO>> PostLoanCard(CreateLoanCardDTO createLoanCard)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                     return NotFound();
                 }
 
-                LoanCardDTO loanCardDTO = loanCard.LoanCardToLoanCardDTO();
+                DTOs.LoanCardDTOs.LoanCardDTO loanCardDTO = loanCard.LoanCardToLoanCardDTO();
 
                 _context.LoanCards.Remove(loanCard);
                 await _context.SaveChangesAsync();

@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryDb_Gabriel_Viinikka.Models;
+using LibraryDb_Gabriel_Viinikka.DTOs.LoansDTOs;
+using LibraryDb_Gabriel_Viinikka.DTOs.LoanCardDTOs;
+using LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions;
 
 namespace LibraryDb_Gabriel_Viinikka.Controllers
 {
@@ -24,7 +27,29 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LoansDTO>>> GetDbLoans()
         {
-            return await _context.DbLoans.ToListAsync();
+               List<LoansDTO> loansDTOs = await _context.DbLoans.AsNoTracking()
+                .Include(loans => loans.LoanCard)
+                    .ThenInclude(loanCard => loanCard.Loaner)
+                .Include(loans => loans.InventoryBook)
+                    .ThenInclude(inventory => inventory.Book)
+                .Select(loans => new LoansDTO 
+                {
+                    Id = loans.Id,
+                    LoanDate = loans.LoanDate,
+                    ReturnDate = loans.ReturnDate,
+                    Inventory = loans.InventoryBook.InventoryToInventoryDTO(loans.InventoryBook.Book),
+                    LoanCard = loans.LoanCard.LoanCardToLoanCardDTO()
+                })
+                .ToListAsync();
+
+            List<Loans> loans = await _context.DbLoans
+                .Include(loans => loans.LoanCard)
+                    .ThenInclude(loanCard => loanCard.Loaner)
+                .Include(loans => loans.InventoryBook)
+                    .ThenInclude(invBook => invBook.Book)
+                    .ToListAsync();
+
+            return loansDTOs;
         }
 
         // GET: api/Loans/5
