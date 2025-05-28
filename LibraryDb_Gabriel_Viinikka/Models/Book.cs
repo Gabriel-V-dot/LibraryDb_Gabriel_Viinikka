@@ -3,6 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryDb_Gabriel_Viinikka.Models
 {
+    /// <summary>
+    /// Navigation properties: Authors, Ratings and Inventories
+    /// Fields required for new Book: Title, ISBN, Authors and PublicationDate. 
+    /// </summary>
     public class Book()
     {
         public int Id { get; set; }

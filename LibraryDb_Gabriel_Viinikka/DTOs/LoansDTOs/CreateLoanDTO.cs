@@ -2,7 +2,10 @@
 
 namespace LibraryDb_Gabriel_Viinikka.DTOs.LoansDTOs
 {
-    public class CreateLoansDTO
+    /// <summary>
+    /// InventoryId and LoanCardId 
+    /// </summary>
+    public class CreateLoanDTO
     {
         public int InventoryId { get; set; }
         public required int LoanCardId { get; set; }

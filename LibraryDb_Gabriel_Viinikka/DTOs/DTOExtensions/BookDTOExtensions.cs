@@ -14,22 +14,58 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
                 Title = book.Title,
                 ISBN = book.ISBN,
                 PublicationYear = book.PublicationDate,
-                Ratings = ratings,
+                AverageRatings = (int)ratings.Average(rate => rate.Score),
                 BookAuthors = authorDtos
             };
 
         }
 
-        public static Book ToBook(this CreateBookDTO createBookDTO, List<Author> authors, List<Rating> ratings)
+        public static Book ToBook(this CreateBookDTO createBookDTO, List<Author> authors)
         {
             return new Book
             {
                 Title = createBookDTO.Title,
                 ISBN = createBookDTO.ISBN,
                 PublicationDate = createBookDTO.PublicationYear,
-                Ratings = ratings,
                 Authors = authors
             };
+        }
+
+        public static BookDTO ToBookDTO(this Book book)
+        {
+            if (book.Ratings.Count < 1)
+            {
+                return new BookDTO 
+                {
+                    Title = book.Title,
+                    ISBN = book.ISBN,
+                    PublicationYear = book.PublicationDate,
+                    BookAuthors = book.Authors
+                            .Select(a => a.ToMinimalAuthorDTO())
+                            .ToList(),
+                    AverageRatings = 0,
+                    InventoryCount = book.Inventories
+                            .Count()
+                };
+            }
+            else
+            {
+                return new BookDTO
+                {
+                    Title = book.Title,
+                    ISBN = book.ISBN,
+                    PublicationYear = book.PublicationDate,
+                    BookAuthors = book.Authors
+                            .Select(a => a.ToMinimalAuthorDTO())
+                            .ToList(),
+                    AverageRatings = book.Ratings
+                            .Select(rate => rate.Score)
+                            .ToList()
+                            .Average(),
+                    InventoryCount = book.Inventories
+                            .Count()
+                };
+            }
         }
 
 

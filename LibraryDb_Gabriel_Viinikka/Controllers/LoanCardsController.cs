@@ -31,7 +31,6 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         public async Task<ActionResult<IEnumerable<DTOs.LoanCardDTOs.LoanCardDTO>>> GetLoanCards()
         {
             List<LoanCardDTO> loanCardDTOs = await _context.LoanCards.AsNoTracking().Include(lc => lc.Loaner).Select(lc => lc.LoanCardToLoanCardDTO()).ToListAsync();
-            List<LoanCardDTO> loanCardDTOs2 = await _context.LoanCards.AsNoTracking().Include(loanCard => loanCard.Loaner).Select(loanCard => loanCard.LoanCardToLoanCardDTO()).ToListAsync();
             return loanCardDTOs;
         }
 

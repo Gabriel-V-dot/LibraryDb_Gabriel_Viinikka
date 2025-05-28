@@ -1,4 +1,5 @@
 ﻿using LibraryDb_Gabriel_Viinikka.DTOs.AuthorDTOs;
+using LibraryDb_Gabriel_Viinikka.DTOs.InventoryDTOs;
 using LibraryDb_Gabriel_Viinikka.Models;
 
 namespace LibraryDb_Gabriel_Viinikka.DTOs.BookDTOs
@@ -11,9 +12,11 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.BookDTOs
 
         public required DateOnly PublicationYear { get; set; }
 
-        public List<Rating> Ratings { get; set; } = [];
+        public double AverageRatings { get; set; }
 
         public List<MinimalAuthorDTO> BookAuthors { get; set; } = new();
+
+        public int InventoryCount { get; set; }
 
     }
 

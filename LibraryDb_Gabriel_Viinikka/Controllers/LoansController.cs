@@ -25,38 +25,23 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
         // GET: api/Loans
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LoansDTO>>> GetDbLoans()
+        public async Task<ActionResult<IEnumerable<LoanDTO>>> GetDbLoans()
         {
-            List<LoansDTO> loansDTOs = await _context.DbLoans.AsNoTracking()
+            return await _context.Loans.AsNoTracking()
              .Include(loan => loan.LoanCard)
                  .ThenInclude(loanCard => loanCard.Loaner)
              .Include(loan => loan.InventoryBook)
                  .ThenInclude(inventory => inventory.Book)
-             .Select(loan => new LoansDTO
-             {
-                 Id = loan.Id,
-                 LoanDate = loan.LoanDate,
-                 ReturnDate = loan.ReturnDate,
-                 Inventory = loan.InventoryBook.InventoryToInventoryDTO(loan.InventoryBook.Book),
-                 LoanCard = loan.LoanCard.LoanCardToLoanCardDTO()
-             })
+             .Select(loan => loan.ToLoanDTO())
              .ToListAsync();
 
-            List<Loans> loans = await _context.DbLoans
-                .Include(loans => loans.LoanCard)
-                    .ThenInclude(loanCard => loanCard.Loaner)
-                .Include(loans => loans.InventoryBook)
-                    .ThenInclude(invBook => invBook.Book)
-                    .ToListAsync();
-
-            return loansDTOs;
         }
 
         // GET: api/Loans/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Loans>> GetLoans(int id)
+        public async Task<ActionResult<Loan>> GetLoans(int id)
         {
-            var loans = await _context.DbLoans.FindAsync(id);
+            var loans = await _context.Loans.FindAsync(id);
 
             if (loans == null)
             {
@@ -69,7 +54,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         // PUT: api/Loans/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutLoans(int id, Loans loans)
+        public async Task<IActionResult> PutLoans(int id, Loan loans)
         {
             if (id != loans.Id)
             {
@@ -100,25 +85,44 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         // POST: api/Loans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Loans>> PostLoans(Loans loans)
+        public async Task<ActionResult<Loan>> PostLoans(CreateLoanDTO createLoanDTO)
         {
-            _context.DbLoans.Add(loans);
+
+            Inventory inventory = await _context.Inventories.
+                Include(inv => inv.Book)
+                .Where(inv => inv.Id == createLoanDTO.InventoryId)
+                .FirstAsync();
+
+            LoanCard loanCard = await _context.LoanCards
+                .Include(lc => lc.Loaner)
+                .Where(lc => lc.Id == createLoanDTO.LoanCardId)
+                .FirstAsync();
+
+            Loan loan = new Loan
+            {
+                LoanDate = DateTime.Now,
+                InventoryBook = inventory,
+                LoanCard = loanCard
+            };
+
+
+        _context.Loans.Add(loan);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetLoans", new { id = loans.Id }, loans);
+            return CreatedAtAction("GetLoans", new { id = loan.Id }, loan.ToLoanDTO());
         }
 
         // DELETE: api/Loans/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLoans(int id)
         {
-            var loans = await _context.DbLoans.FindAsync(id);
+            var loans = await _context.Loans.FindAsync(id);
             if (loans == null)
             {
                 return NotFound();
             }
 
-            _context.DbLoans.Remove(loans);
+            _context.Loans.Remove(loans);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -126,7 +130,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
         private bool LoansExists(int id)
         {
-            return _context.DbLoans.Any(e => e.Id == id);
+            return _context.Loans.Any(e => e.Id == id);
         }
     }
 }

@@ -1,6 +1,10 @@
 ﻿namespace LibraryDb_Gabriel_Viinikka.Models
 {
-    public class Loans()
+    /// <summary>
+    /// fields required for new Loan:
+    /// LoanDate, InventoryBook and LoanCard
+    /// </summary>
+    public class Loan()
     {
         public int Id { get; set; }
         public required DateTime LoanDate { get; set; } = DateTime.Now;

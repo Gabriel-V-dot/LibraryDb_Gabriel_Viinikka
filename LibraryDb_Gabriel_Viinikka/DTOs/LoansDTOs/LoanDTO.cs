@@ -4,7 +4,7 @@ using LibraryDb_Gabriel_Viinikka.Models;
 
 namespace LibraryDb_Gabriel_Viinikka.DTOs.LoansDTOs
 {
-    public class LoansDTO
+    public class LoanDTO
     {
         public int Id { get; set; }
         public required DateTime LoanDate { get; set; }

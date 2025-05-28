@@ -11,6 +11,8 @@ using LibraryDb_Gabriel_Viinikka.DTOs.BookDTOs;
 using LibraryDb_Gabriel_Viinikka.DTOs.AuthorDTOs;
 using Humanizer;
 using LibraryDb_Gabriel_Viinikka.Services;
+using LibraryDb_Gabriel_Viinikka.DTOs.InventoryDTOs;
+
 
 namespace LibraryDb_Gabriel_Viinikka.Controllers
 {
@@ -32,23 +34,16 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookDTO>>> GetBooks()
         {
-            return await _context.Books.AsNoTracking()
-                .Include(auth => auth.Authors)
-                .Select(b => new BookDTO
-                {
-                    Title = b.Title,
-                    ISBN = b.ISBN,
-                    PublicationYear = b.PublicationDate,
-                    BookAuthors = b.Authors
-                .Select(a => new MinimalAuthorDTO
-                {
-                    FirstName = a.FirstName,
-                    LastName = a.LastName
-                })
-                .ToList()
-                }).ToListAsync();
-            //return await _context.Books.Include(auth => auth.Authors).Select( b => b.ToBookDTO()).ToListAsync();
+         
 
+            List<BookDTO> bookDTO = await _context.Books.AsNoTracking()
+                .Include(auth => auth.Authors)
+                .Include(rating => rating.Ratings)
+                .Include(inv => inv.Inventories)
+                .Select(b => b.ToBookDTO())
+                .ToListAsync();
+            //return await _context.Books.Include(auth => auth.Authors).Select( b => b.ToBookDTO()).ToListAsync();
+            return bookDTO;
         }
 
         // GET: api/Books/5
@@ -163,7 +158,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
                 List<Author> authors = _context.Authors.Where(auth => createBookDTO.AuthorIds.Contains(auth.Id)).ToList();
 
-                var book = createBookDTO.ToBook(authors,[]);
+                var book = createBookDTO.ToBook(authors);
 
                 _context.Books.Add(book);
                 //Need to add an put for adding the book to the authors list of books 

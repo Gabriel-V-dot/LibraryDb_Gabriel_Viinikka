@@ -12,9 +12,9 @@ namespace LibraryDb_Gabriel_Viinikka.Models
         public DbSet<Book> Books { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Loaner> Loaners { get; set; }
-        public DbSet<Loans> DbLoans { get; set; }
+        public DbSet<Loan> Loans { get; set; }
         public DbSet<LoanCard> LoanCards { get; set; }
-        public DbSet<Inventory> Inventory { get; set; }
+        public DbSet<Inventory> Inventories { get; set; }
         public DbSet<Rating> Ratings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

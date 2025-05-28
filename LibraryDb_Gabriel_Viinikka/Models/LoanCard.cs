@@ -1,5 +1,9 @@
 ﻿namespace LibraryDb_Gabriel_Viinikka.Models
 {
+    /// <summary>
+    /// Navigation properties: Loaner
+    /// Fields requried for new: Loaner, CreationDate, ExpirationDate and IsActive
+    /// </summary>
     public class LoanCard
     {
         public int Id { get; set; }
