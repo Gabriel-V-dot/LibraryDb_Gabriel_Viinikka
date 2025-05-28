@@ -27,20 +27,20 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LoansDTO>>> GetDbLoans()
         {
-               List<LoansDTO> loansDTOs = await _context.DbLoans.AsNoTracking()
-                .Include(loans => loans.LoanCard)
-                    .ThenInclude(loanCard => loanCard.Loaner)
-                .Include(loans => loans.InventoryBook)
-                    .ThenInclude(inventory => inventory.Book)
-                .Select(loans => new LoansDTO 
-                {
-                    Id = loans.Id,
-                    LoanDate = loans.LoanDate,
-                    ReturnDate = loans.ReturnDate,
-                    Inventory = loans.InventoryBook.InventoryToInventoryDTO(loans.InventoryBook.Book),
-                    LoanCard = loans.LoanCard.LoanCardToLoanCardDTO()
-                })
-                .ToListAsync();
+            List<LoansDTO> loansDTOs = await _context.DbLoans.AsNoTracking()
+             .Include(loan => loan.LoanCard)
+                 .ThenInclude(loanCard => loanCard.Loaner)
+             .Include(loan => loan.InventoryBook)
+                 .ThenInclude(inventory => inventory.Book)
+             .Select(loan => new LoansDTO
+             {
+                 Id = loan.Id,
+                 LoanDate = loan.LoanDate,
+                 ReturnDate = loan.ReturnDate,
+                 Inventory = loan.InventoryBook.InventoryToInventoryDTO(loan.InventoryBook.Book),
+                 LoanCard = loan.LoanCard.LoanCardToLoanCardDTO()
+             })
+             .ToListAsync();
 
             List<Loans> loans = await _context.DbLoans
                 .Include(loans => loans.LoanCard)

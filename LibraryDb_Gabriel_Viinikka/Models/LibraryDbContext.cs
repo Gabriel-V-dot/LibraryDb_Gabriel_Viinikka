@@ -84,8 +84,12 @@ namespace LibraryDb_Gabriel_Viinikka.Models
 
             #region LoanCard
 
+            modelBuilder.Entity<LoanCard>()
+                .HasOne(l => l.Loaner)
+                .WithMany(lc => lc.LoanCards)
+                .HasForeignKey(l => l.LoanerId)
+                .OnDelete(DeleteBehavior.SetNull);
             
-
             #endregion
 
 
