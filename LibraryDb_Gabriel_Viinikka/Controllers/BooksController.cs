@@ -12,6 +12,7 @@ using LibraryDb_Gabriel_Viinikka.DTOs.AuthorDTOs;
 using Humanizer;
 using LibraryDb_Gabriel_Viinikka.Services;
 using LibraryDb_Gabriel_Viinikka.DTOs.InventoryDTOs;
+using Microsoft.IdentityModel.Tokens;
 
 
 namespace LibraryDb_Gabriel_Viinikka.Controllers
@@ -118,12 +119,28 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         // PUT: api/Books/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook(int id, Book book)
+        public async Task<IActionResult> PutBook(int id, UpdateBookDTO bookUpdate)
         {
-            if (id != book.Id)
+            var book = await _context.Books.Where(book => book.Id == id).Include(auth => auth.Authors).FirstOrDefaultAsync();
+            if (book == null)
             {
-                return BadRequest();
+                return NotFound();
             }
+
+            List<Author> updateAuthors = new List<Author>();
+
+            if (bookUpdate.AuthorIds.Any())
+            {
+                foreach (int authorId in bookUpdate.AuthorIds)
+                {
+                    Author? updateAuthor = await _context.Authors.FindAsync(authorId);
+                    if (updateAuthor == null) continue;
+                    updateAuthors.Add(updateAuthor);
+                }
+            }
+
+            book.Title = bookUpdate.Title.IsNullOrEmpty() ? book.Title : bookUpdate.Title;
+            book.Authors = updateAuthors.Any() ? updateAuthors : book.Authors;
 
             _context.Entry(book).State = EntityState.Modified;
 
@@ -183,8 +200,6 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         {
             try
             {
-               // var book = await _context.Books.FindAsync(id).Include(auth => auth.Authors);
-
                 var book = await _context.Books.Where(book =>book.Id == id).Include(auth => auth.Authors).FirstOrDefaultAsync();
                 if (book == null)
                 {

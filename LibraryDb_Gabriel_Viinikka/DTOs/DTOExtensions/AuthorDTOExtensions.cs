@@ -1,4 +1,5 @@
 ﻿using LibraryDb_Gabriel_Viinikka.DTOs.AuthorDTOs;
+using LibraryDb_Gabriel_Viinikka.DTOs.BookDTOs;
 using LibraryDb_Gabriel_Viinikka.Models;
 
 namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
@@ -16,7 +17,8 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
         { 
             Id = author.Id,
             FirstName = author.FirstName,
-            LastName = author.LastName
+            LastName = author.LastName,
+            Books = author.Books.Select(book => book.ToMinimalBookDTO()).ToList()
         };
 
         public static Author ToAuthor(this CreateAuthorDTO authorDTO, List<Book> books)

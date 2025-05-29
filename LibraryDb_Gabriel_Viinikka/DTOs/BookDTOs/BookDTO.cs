@@ -6,6 +6,7 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.BookDTOs
 {
     public class BookDTO
     {
+        public int Id { get; set; }
         public required string Title { get; set; }
 
         public required string ISBN { get; set; }
