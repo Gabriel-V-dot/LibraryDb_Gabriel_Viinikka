@@ -33,42 +33,25 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
 
         public static BookDTO ToBookDTO(this Book book)
         {
-            if (book.Ratings.Count < 1)
-            {
                 return new BookDTO 
                 {
+                    Id = book.Id,
                     Title = book.Title,
                     ISBN = book.ISBN,
                     PublicationYear = book.PublicationDate,
                     BookAuthors = book.Authors
                             .Select(a => a.ToMinimalAuthorDTO())
                             .ToList(),
-                    AverageRatings = 0,
+                    AverageRatings = book.Ratings.Any() ? book.Ratings.Average(rate => rate.Score) : 0,
                     InventoryCount = book.Inventories
                             .Count()
                 };
-            }
-            else
-            {
-                return new BookDTO
-                {
-                    Title = book.Title,
-                    ISBN = book.ISBN,
-                    PublicationYear = book.PublicationDate,
-                    BookAuthors = book.Authors
-                            .Select(a => a.ToMinimalAuthorDTO())
-                            .ToList(),
-                    AverageRatings = book.Ratings
-                            .Select(rate => rate.Score)
-                            .ToList()
-                            .Average(),
-                    InventoryCount = book.Inventories
-                            .Count()
-                };
-            }
         }
 
-
+        public static MinimalBookDTO ToMinimalBookDTO(this Book book)
+        {
+            return new MinimalBookDTO { Title = book.Title };
+        }
     }
 
 }
