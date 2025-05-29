@@ -127,17 +127,11 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 return NotFound();
             }
 
-            List<Author> updateAuthors = new List<Author>();
-
-            if (bookUpdate.AuthorIds.Any())
-            {
-                foreach (int authorId in bookUpdate.AuthorIds)
-                {
-                    Author? updateAuthor = await _context.Authors.FindAsync(authorId);
-                    if (updateAuthor == null) continue;
-                    updateAuthors.Add(updateAuthor);
-                }
-            }
+            List<Author> updateAuthors = bookUpdate.AuthorIds
+                .Select(async authorId => await _context.Authors.FindAsync(authorId))
+                .Where(task => task.Result != null)
+                .Select(task => task.Result!)
+                .ToList();
 
             book.Title = bookUpdate.Title.IsNullOrEmpty() ? book.Title : bookUpdate.Title;
             book.Authors = updateAuthors.Any() ? updateAuthors : book.Authors;
