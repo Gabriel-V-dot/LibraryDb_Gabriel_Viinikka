@@ -43,24 +43,30 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 .Include(inv => inv.Inventories)
                 .Select(b => b.ToBookDTO())
                 .ToListAsync();
-            //return await _context.Books.Include(auth => auth.Authors).Select( b => b.ToBookDTO()).ToListAsync();
+            
             return bookDTO;
         }
 
         // GET: api/Books/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(int id)
+        public async Task<ActionResult<BookDTO>> GetBook(int id)
         {
             try
             {
-                var book = await _context.Books.FindAsync(id);
+                
+                Book? book = await _context.Books.AsNoTracking()
+                    .Include(auth => auth.Authors)
+                    .Include(rating => rating.Ratings)
+                    .Include(inv => inv.Inventories)
+                    .Where(book => book.Id == id)
+                    .FirstAsync();
 
                 if (book == null)
                 {
                     return NotFound();
                 }
 
-                return book;
+                return book.ToBookDTO();
             }
             catch (Exception ex)
             {
@@ -83,24 +89,14 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 }
 
                 List<BookDTO> bookDtos = await _context.Books
+                    .AsNoTracking()
+                    .Include(auth => auth.Authors)
+                    .Include(rating => rating.Ratings)
+                    .Include(inv => inv.Inventories)
                     .Where(book => book.Title.ToLower().Contains(search))
-                    .Select(book => new BookDTO
-                    {
-                        Title = book.Title,
-                        ISBN = book.ISBN,
-                        PublicationYear = book.PublicationDate,
-                        BookAuthors = book.Authors
-                        .Select(author => new MinimalAuthorDTO
-                        {
-                            FirstName = author.FirstName,
-                            LastName = author.LastName
-                        }).ToList()
-                    }).ToListAsync();
+                    .Select(book => book.ToBookDTO())
+                    .ToListAsync();
 
-                //await _context.Authors
-                //.Where(a => a.LastName.ToLower().Contains(search) || a.FirstName.ToLower().Contains(search))
-                //.Select(a => a.ToAuthorDTO())
-                //.ToListAsync();
 
                 if (bookDtos == null || bookDtos.Count == 0)
                 {

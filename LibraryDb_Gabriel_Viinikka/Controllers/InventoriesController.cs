@@ -26,14 +26,14 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InventoryDTO>>> GetInventory()
         {
-            return await _context.Inventories.Include(i => i.Book).Select(i => i.ToInventoryDTO(i.Book)).ToListAsync();
+            return await _context.Inventories.AsNoTracking().Include(i => i.Book).Select(i => i.ToInventoryDTO(i.Book)).ToListAsync();
         }
 
         // GET: api/Inventories/5
         [HttpGet("{id}")]
         public async Task<ActionResult<InventoryDTO>> GetInventory(int id)
         {
-            var inventory = await _context.Inventories.Where(i => i.Id == id).Include(i => i.Book).FirstAsync();
+            Inventory? inventory = await _context.Inventories.AsNoTracking().Where(i => i.Id == id).Include(i => i.Book).FirstAsync();
 
             if (inventory == null)
             {
