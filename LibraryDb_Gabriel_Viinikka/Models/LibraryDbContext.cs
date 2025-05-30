@@ -8,7 +8,7 @@ namespace LibraryDb_Gabriel_Viinikka.Models
         {
 
         }
-
+        #region DbSet
         public DbSet<Book> Books { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Loaner> Loaners { get; set; }
@@ -16,7 +16,7 @@ namespace LibraryDb_Gabriel_Viinikka.Models
         public DbSet<LoanCard> LoanCards { get; set; }
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<Rating> Ratings { get; set; }
-
+        #endregion
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -54,7 +54,7 @@ namespace LibraryDb_Gabriel_Viinikka.Models
 
             modelBuilder.Entity<Book>()
                 .HasMany(b => b.Ratings)
-                .WithMany(r => r.Books);
+                .WithOne(r => r.Book);
 
             #endregion
 

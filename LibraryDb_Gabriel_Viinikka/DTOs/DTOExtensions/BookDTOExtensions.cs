@@ -14,7 +14,7 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
                 Title = book.Title,
                 ISBN = book.ISBN,
                 PublicationYear = book.PublicationDate,
-                AverageRatings = (int)ratings.Average(rate => rate.Score),
+                AverageRating = (int)ratings.Average(rate => rate.Score),
                 BookAuthors = authorDtos
             };
 
@@ -42,7 +42,7 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
                     BookAuthors = book.Authors
                             .Select(a => a.ToMinimalAuthorDTO())
                             .ToList(),
-                    AverageRatings = book.Ratings.Any() ? book.Ratings.Average(rate => rate.Score) : 0,
+                    AverageRating = book.Ratings.Any() ? Math.Round(book.Ratings.Average(rate => rate.Score),2) : 0,
                     InventoryCount = book.Inventories
                             .Count()
                 };

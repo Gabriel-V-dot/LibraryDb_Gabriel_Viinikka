@@ -13,7 +13,7 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.BookDTOs
 
         public required DateOnly PublicationYear { get; set; }
 
-        public double AverageRatings { get; set; }
+        public double AverageRating { get; set; }
 
         public List<MinimalAuthorDTO> BookAuthors { get; set; } = new();
 
