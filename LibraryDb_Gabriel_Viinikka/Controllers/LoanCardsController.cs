@@ -30,7 +30,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DTOs.LoanCardDTOs.LoanCardDTO>>> GetLoanCards()
         {
-            List<LoanCardDTO> loanCardDTOs = await _context.LoanCards.AsNoTracking().Include(lc => lc.Loaner).Select(lc => lc.LoanCardToLoanCardDTO()).ToListAsync();
+            List<LoanCardDTO> loanCardDTOs = await _context.LoanCards.AsNoTracking().Include(lc => lc.Loaner).Select(lc => lc.ToLoanCardDTO()).ToListAsync();
             return loanCardDTOs;
         }
 
@@ -38,7 +38,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DTOs.LoanCardDTOs.LoanCardDTO>> GetLoanCard(int id)
         {
-            var loanCardDTO = await _context.LoanCards.AsNoTracking().Include(lc => lc.Loaner).Where(lc => lc.Id == id).Select(lc => lc.LoanCardToLoanCardDTO()).FirstOrDefaultAsync();
+            var loanCardDTO = await _context.LoanCards.AsNoTracking().Include(lc => lc.Loaner).Where(lc => lc.Id == id).Select(lc => lc.ToLoanCardDTO()).FirstOrDefaultAsync();
 
             if (loanCardDTO == null)
             {
@@ -89,12 +89,12 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 Loaner? loaner = await _context.Loaners.FindAsync(createLoanCard.LoanerId);
                 if (loaner == null) return NotFound();
 
-                LoanCard loanCard = loaner.LoanerToLoanCard();
+                LoanCard loanCard = loaner.ToLoanCard();
 
                 _context.LoanCards.Add(loanCard);
                 await _context.SaveChangesAsync();
 
-                LoanCardDTO loanCardDTO = loanCard.LoanCardToLoanCardDTO();
+                LoanCardDTO loanCardDTO = loanCard.ToLoanCardDTO();
 
                 return CreatedAtAction("GetLoanCard", new { id = loanCardDTO.Id }, loanCardDTO);
             }
@@ -118,7 +118,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                     return NotFound();
                 }
 
-                DTOs.LoanCardDTOs.LoanCardDTO loanCardDTO = loanCard.LoanCardToLoanCardDTO();
+                DTOs.LoanCardDTOs.LoanCardDTO loanCardDTO = loanCard.ToLoanCardDTO();
 
                 _context.LoanCards.Remove(loanCard);
                 await _context.SaveChangesAsync();

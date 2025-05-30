@@ -6,7 +6,7 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
     public static class InventoryDTOExtensions
     {
 
-        public static Inventory BookTOInventory(this Book book)
+        public static Inventory TOInventory(this Book book)
         {
             return new Inventory
             {
@@ -16,7 +16,7 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
             };
         }
 
-        public static InventoryDTO InventoryToInventoryDTO(this Inventory inventory,Book book)
+        public static InventoryDTO ToInventoryDTO(this Inventory inventory,Book book)
         {
             return new InventoryDTO
             {

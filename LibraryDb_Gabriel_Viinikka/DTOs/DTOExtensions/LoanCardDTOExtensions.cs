@@ -6,7 +6,7 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
     public static class LoanCardDTOExtensions
     {
 
-        public static LoanCard LoanerToLoanCard(this Loaner loaner)
+        public static LoanCard ToLoanCard(this Loaner loaner)
         {
             return new LoanCard
             {
@@ -18,7 +18,7 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
             };
         }
 
-        public static LoanCardDTO LoanCardToLoanCardDTO(this LoanCard loanCard)
+        public static LoanCardDTO ToLoanCardDTO(this LoanCard loanCard)
         {
             return new LoanCardDTO
             {
