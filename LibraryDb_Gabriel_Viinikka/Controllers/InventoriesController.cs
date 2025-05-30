@@ -26,7 +26,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InventoryDTO>>> GetInventory()
         {
-            return await _context.Inventories.AsNoTracking().Include(i => i.Book).Select(i => i.ToInventoryDTO(i.Book)).ToListAsync();
+            return await _context.Inventories.AsNoTracking().Include(i => i.Book).Select(i => i.ToInventoryDTO()).ToListAsync();
         }
 
         // GET: api/Inventories/5
@@ -40,7 +40,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 return NotFound();
             }
 
-            return inventory.ToInventoryDTO(inventory.Book);
+            return inventory.ToInventoryDTO();
         }
 
         // PUT: api/Inventories/5
@@ -82,12 +82,12 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
             Book? book = await _context.Books.FindAsync(createInventoryDTO.BookId);
             if (book == null) return NotFound();
 
-            Inventory inventory = book.TOInventory();
+            Inventory inventory = createInventoryDTO.ToInventory(book);
 
             _context.Inventories.Add(inventory);
             await _context.SaveChangesAsync();
 
-            InventoryDTO inventoryDTO = inventory.ToInventoryDTO(book);
+            InventoryDTO inventoryDTO = inventory.ToInventoryDTO();
 
             return CreatedAtAction("GetInventory", new { id = inventoryDTO.Id }, inventoryDTO);
         }

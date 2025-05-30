@@ -13,9 +13,10 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
             {
                 Id = loan.Id,
                 LoanDate = loan.LoanDate,
-                ReturnDate = loan.ReturnDate,
-                Inventory = loan.InventoryBook.ToInventoryDTO(loan.InventoryBook.Book),
-                LoanCard = loan.LoanCard.ToLoanCardDTO()
+                ReturnDate = loan.LoanDate.AddDays(loan.Inventory.DaysToLoan),
+                Inventory = loan.Inventory.ToMinimalInventoryDTO(),
+                LoanCard = loan.LoanCard.ToMinimalLoanCardDTO(),
+                DaysLeft = (int)(loan.LoanDate - loan.LoanDate.AddDays(loan.Inventory.DaysToLoan - 1)).TotalDays
             };
         }
 

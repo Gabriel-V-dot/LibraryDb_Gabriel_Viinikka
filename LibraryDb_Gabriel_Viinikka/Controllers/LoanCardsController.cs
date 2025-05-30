@@ -89,7 +89,9 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 Loaner? loaner = await _context.Loaners.FindAsync(createLoanCard.LoanerId);
                 if (loaner == null) return NotFound();
 
-                LoanCard loanCard = loaner.ToLoanCard();
+                createLoanCard.ValidTime = createLoanCard.ValidTime <= 0 ? 5 : createLoanCard.ValidTime;
+
+                LoanCard loanCard = createLoanCard.ToLoanCard(loaner);
 
                 _context.LoanCards.Add(loanCard);
                 await _context.SaveChangesAsync();

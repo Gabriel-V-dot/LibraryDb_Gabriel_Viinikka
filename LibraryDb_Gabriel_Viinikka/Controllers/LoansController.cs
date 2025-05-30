@@ -30,8 +30,9 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
             return await _context.Loans.AsNoTracking()
              .Include(loan => loan.LoanCard)
                  .ThenInclude(loanCard => loanCard.Loaner)
-             .Include(loan => loan.InventoryBook)
+             .Include(loan => loan.Inventory)
                  .ThenInclude(inventory => inventory.Book)
+                    .ThenInclude(book => book.Authors)
              .Select(loan => loan.ToLoanDTO())
              .ToListAsync();
 
@@ -99,10 +100,14 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                     .Where(lc => lc.Id == createLoanDTO.LoanCardId)
                     .FirstAsync();
 
+                if (loanCard.ExpirationDate < DateTime.Now || loanCard.IsActive == false || loanCard.Loaner == null) return BadRequest("This Loan Card is not valid or has expired");
+                if (inventory.Available == false) return NotFound("This book is not available");
+
+                inventory.Available = false;
                 Loan loan = new Loan
                 {
                     LoanDate = DateTime.Now,
-                    InventoryBook = inventory,
+                    Inventory = inventory,
                     LoanCard = loanCard
                 };
 

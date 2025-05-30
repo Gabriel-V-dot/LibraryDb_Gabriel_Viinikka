@@ -1,4 +1,6 @@
-﻿using LibraryDb_Gabriel_Viinikka.DTOs.LoanCardDTOs;
+﻿using Humanizer;
+using LibraryDb_Gabriel_Viinikka.DTOs.LoanCardDTOs;
+using LibraryDb_Gabriel_Viinikka.DTOs.LoanerDTOs;
 using LibraryDb_Gabriel_Viinikka.Models;
 
 namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
@@ -6,14 +8,14 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
     public static class LoanCardDTOExtensions
     {
 
-        public static LoanCard ToLoanCard(this Loaner loaner)
+        public static LoanCard ToLoanCard(this CreateLoanCardDTO createLoanCardDTO, Loaner loaner)
         {
             return new LoanCard
             {
                 Loaner = loaner,
                 LoanerId = loaner.Id,
                 CreationDate = DateTime.Now,
-                ExpirationDate = DateTime.Now.AddYears(5),
+                ExpirationDate = DateTime.Now.AddYears(createLoanCardDTO.ValidTime),
                 IsActive = true
             };
         }
@@ -26,6 +28,14 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
                 Loaner = loanCard.Loaner?.ToCreateLoanerDTO(),
                 ExpirationDate = DateOnly.FromDateTime(loanCard.ExpirationDate),
                 IsActive = loanCard.IsActive
+            };
+        }
+
+        public static MinimalLoanCardDTO ToMinimalLoanCardDTO(this LoanCard loanCard)
+        {
+            return new MinimalLoanCardDTO
+            {
+                Loaner = loanCard.Loaner?.ToCreateLoanerDTO()
             };
         }
 

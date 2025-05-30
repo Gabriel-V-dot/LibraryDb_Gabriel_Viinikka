@@ -50,7 +50,13 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
 
         public static MinimalBookDTO ToMinimalBookDTO(this Book book)
         {
-            return new MinimalBookDTO { Title = book.Title };
+            return new MinimalBookDTO { 
+                Title = book.Title, 
+                Authors = book.Authors
+                .Select(auth => auth
+                .ToMinimalAuthorDTO())
+                .ToList()
+            };
         }
     }
 

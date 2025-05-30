@@ -6,5 +6,6 @@
         public int BookId { get; set; }
         public required Book Book { get; set; }
         public bool Available { get; set; } = true;
+        public required int DaysToLoan { get; set; } = 1;
     }
 }

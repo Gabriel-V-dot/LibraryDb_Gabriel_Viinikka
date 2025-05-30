@@ -66,6 +66,9 @@ namespace LibraryDb_Gabriel_Viinikka.Models
                 .HasForeignKey(i => i.BookId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Inventory>()
+                .ToTable(inv => inv.HasCheckConstraint("CK_Inventory_DaysToLoan", "[DaysToLoan] BETWEEN 1 AND 60"));
+
             #endregion
 
             #region Loaner

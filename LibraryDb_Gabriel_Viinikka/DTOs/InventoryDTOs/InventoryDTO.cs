@@ -7,5 +7,7 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.InventoryDTOs
         public int Id { get; set; }
         public required Book Book { get; set; }
         public bool Available { get; set; }
+        public int DaysToLoan { get; set; }
     }
 }
+            
