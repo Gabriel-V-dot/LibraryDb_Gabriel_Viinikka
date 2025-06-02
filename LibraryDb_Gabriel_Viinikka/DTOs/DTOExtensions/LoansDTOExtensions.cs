@@ -7,19 +7,30 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
     public static class LoansDTOExtensions
     {
 
-        public static LoanDTO ToLoanDTO(this Loan loan)
+        public static ActiveLoanDTO ToActiveLoanDTO(this Loan loan)
         {
-            return new LoanDTO
+            return new ActiveLoanDTO
             {
                 Id = loan.Id,
-                LoanDate = loan.LoanDate,
-                ReturnDate = loan.LoanDate.AddDays(loan.Inventory.DaysToLoan),
+                LoanDate = new DateOnly (loan.LoanDate.Year,loan.LoanDate.Month,loan.LoanDate.Day),
+                ExpectedReturnDate = new DateOnly(loan.LoanDate.Year, loan.LoanDate.Month, loan.LoanDate.Day + loan.Inventory.DaysToLoan),
                 Inventory = loan.Inventory.ToMinimalInventoryDTO(),
                 LoanCard = loan.LoanCard.ToMinimalLoanCardDTO(),
-                DaysLeft = (int)(loan.LoanDate - loan.LoanDate.AddDays(loan.Inventory.DaysToLoan - 1)).TotalDays
+                DaysToLoan = (int)(loan.LoanDate.AddDays(loan.Inventory.DaysToLoan) - loan.LoanDate).TotalDays  //(int)(loan.LoanDate - loan.LoanDate.AddDays(loan.Inventory.DaysToLoan)).TotalDays
             };
         }
-
+        public static ReturnedLoanDTO ToReturnLoanDTO(this Loan loan)
+        {
+            return new ReturnedLoanDTO
+            {
+                Id = loan.Id,
+                LoanDate = new DateOnly(loan.LoanDate.Year, loan.LoanDate.Month, loan.LoanDate.Day),
+                ReturnDate = DateOnly.FromDateTime((DateTime)loan.ReturnDate!),
+                Inventory = loan.Inventory.ToMinimalInventoryDTO(),
+                LoanCard = loan.LoanCard.ToMinimalLoanCardDTO(),
+                DaysLeft = (int)(loan.LoanDate.AddDays(loan.Inventory.DaysToLoan) - (DateTime)loan.ReturnDate).TotalDays// (int)((DateTime)loan.ReturnDate! - (loan.LoanDate.AddDays(loan.Inventory.DaysToLoan))).TotalDays // reaturndate - (expexcted returndate)(loandate + daystoloan)    // (int)(loan.LoanDate - loan.LoanDate.AddDays(loan.Inventory.DaysToLoan - 1)).TotalDays
+            };
+        }
 
 
 

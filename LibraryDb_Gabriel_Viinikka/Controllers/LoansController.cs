@@ -9,6 +9,7 @@ using LibraryDb_Gabriel_Viinikka.Models;
 using LibraryDb_Gabriel_Viinikka.DTOs.LoansDTOs;
 using LibraryDb_Gabriel_Viinikka.DTOs.LoanCardDTOs;
 using LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions;
+using LibraryDb_Gabriel_Viinikka.DTOs.LoanDTOs;
 
 namespace LibraryDb_Gabriel_Viinikka.Controllers
 {
@@ -25,17 +26,31 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
         // GET: api/Loans
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LoanDTO>>> GetLoans()
+        public async Task<ActionResult<LoanDTO>> GetLoans()
         {
-            return await _context.Loans.AsNoTracking()
+            List<ActiveLoanDTO> activeLoanDTOs = await _context.Loans.AsNoTracking()
              .Include(loan => loan.LoanCard)
                  .ThenInclude(loanCard => loanCard.Loaner)
              .Include(loan => loan.Inventory)
                  .ThenInclude(inventory => inventory.Book)
                     .ThenInclude(book => book.Authors)
-             .Select(loan => loan.ToLoanDTO())
+             .Where(loan => loan.ReturnDate == null)
+             .Select(loan => loan.ToActiveLoanDTO())
              .ToListAsync();
 
+            List<ReturnedLoanDTO> returnedLoanDTOs = await _context.Loans.AsNoTracking()
+             .Include(loan => loan.LoanCard)
+                 .ThenInclude(loanCard => loanCard.Loaner)
+             .Include(loan => loan.Inventory)
+                 .ThenInclude(inventory => inventory.Book)
+                    .ThenInclude(book => book.Authors)
+             .Where(loan => loan.ReturnDate != null)
+             .Select(loan => loan.ToReturnLoanDTO())
+             .ToListAsync();
+
+            LoanDTO loans = new LoanDTO { ActiveLoanDTOs = activeLoanDTOs, ReturnedLoanDTOs = returnedLoanDTOs};
+
+            return loans;
         }
 
         // GET: api/Loans/5
@@ -54,33 +69,57 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
         // PUT: api/Loans/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLoan(int id, Loan loans)
+        [HttpPut]
+        public async Task<IActionResult> ReturnLoan(UpdateLoanDTO updateLoanDTO)
         {
-            if (id != loans.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(loans).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LoansExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                Loan loan = await _context.Loans
+                .Include(loan => loan.LoanCard)
+                    .ThenInclude(loanCard => loanCard.Loaner)
+                .Include(loan => loan.Inventory)
+                    .ThenInclude(inventory => inventory.Book)
+                       .ThenInclude(book => book.Authors)
+                .Where(loan => loan.InventoryId == updateLoanDTO.InventoryId)
+                .FirstAsync();
+
+                if (loan == null)
+                {
+                    return BadRequest("There is no active loan for this book");
+                }
+
+                loan.ReturnDate = DateTime.Now;
+
+                _context.Entry(loan).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!LoansExists(loan.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                ReturnedLoanDTO loanReturnDTO = loan.ToReturnLoanDTO();
+
+                string message = loanReturnDTO.DaysLeft < 0 ? $"You book is returned late with {loanReturnDTO.DaysLeft * -1} days." : "";
+
+                return Ok($"{loan.ToReturnLoanDTO()} \n {message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return BadRequest(ex.Message);
+            }
         }
 
         // POST: api/Loans
@@ -115,7 +154,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 _context.Loans.Add(loan);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction("GetLoans", new { id = loan.Id }, loan.ToLoanDTO());
+                return CreatedAtAction("GetLoans", new { id = loan.Id }, loan.ToActiveLoanDTO());
             }
             catch (Exception ex)
             {
