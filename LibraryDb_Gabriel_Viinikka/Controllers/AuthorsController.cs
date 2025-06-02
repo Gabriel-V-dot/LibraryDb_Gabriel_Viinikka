@@ -30,7 +30,10 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAuthors()
         {
-            return await _context.Authors.Include(book => book.Books).Select(a => a.ToAuthorDTO()).ToListAsync();
+            return await _context.Authors
+                .Include(book => book.Books)
+                    .ThenInclude(auth => auth.Authors)
+                .Select(a => a.ToAuthorDTO()).ToListAsync();
         }
 
         //GET: api/Authors
@@ -112,9 +115,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 return BadRequest();
             }
 
-            // list of bookIds => list of Book
-
-            List<Book> books = _context.Books.AsNoTracking().Where(bId => createAuthorDTO.BookId.Contains(bId.Id)).ToList();
+            List<Book> books = _context.Books.Where(bId => createAuthorDTO.BookId.Contains(bId.Id)).ToList();
             var author = createAuthorDTO.ToAuthor(books);
 
             _context.Authors.Add(author);

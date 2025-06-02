@@ -6,19 +6,6 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
 {
     public static class BookDTOExtensions
     {
-        public static BookDTO ToBookDTO(this Book book, List<MinimalAuthorDTO> authorDtos, List<Rating> ratings)
-        {
-
-            return new BookDTO
-            {
-                Title = book.Title,
-                ISBN = book.ISBN,
-                PublicationYear = book.PublicationDate,
-                AverageRating = (int)ratings.Average(rate => rate.Score),
-                BookAuthors = authorDtos
-            };
-
-        }
 
         public static Book ToBook(this CreateBookDTO createBookDTO, List<Author> authors)
         {
@@ -58,6 +45,16 @@ namespace LibraryDb_Gabriel_Viinikka.DTOs.DTOExtensions
                 .ToList()
             };
         }
+
+        public static AuthorMinimalBookDTO ToAuthorMinimalBookDTO(this Book book)
+        {
+            return new AuthorMinimalBookDTO
+            {
+                Title = book.Title,
+                CoAuthors = book.Authors.Count() <= 1 ? 0 : book.Authors.Count()-1
+            };
+        }
+
     }
 
 }

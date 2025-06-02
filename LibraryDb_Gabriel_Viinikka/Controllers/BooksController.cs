@@ -174,7 +174,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
                 List<MinimalAuthorDTO> authorsDtos = book.Authors.Select(auth => auth.ToMinimalAuthorDTO()).ToList();
 
 
-                return CreatedAtAction("GetBook", new { id = book.Id }, book.ToBookDTO(authorsDtos, []));
+                return CreatedAtAction("GetBook", new { id = book.Id }, book.ToBookDTO());
             }
             catch(Exception ex) 
             {
