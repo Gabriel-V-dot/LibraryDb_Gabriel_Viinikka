@@ -104,9 +104,19 @@ $httpMethod = "Post"   ### "Get", "Post", "Put", "Delete"
 
 $endPoint = "$baseUrl/api/Authors"
 
+write-host $baseUrl
+
 $json = '{ 
-    "FirstName": "Anne", 
-    "LastName": "Frank" 
+    "FirstName": "Gabriel", 
+    "LastName": "Viinikka" 
+}'
+
+$response = Invoke-RestMethod -Uri $endPoint -Method $httpMethod -Body $json -ContentType "application/json"
+$response | Format-Table
+
+$json = '{
+    "FirstName": "Gabriella", 
+    "LastName": "Viinikka" 
 }'
 
 $response = Invoke-RestMethod -Uri $endPoint -Method $httpMethod -Body $json -ContentType "application/json"
@@ -116,3 +126,18 @@ $response | Format-Table
 ### ------------ Query Author from the database
 $sqlResult = Invoke-Sqlcmd -ConnectionString $connectionString -Query "Select * FROM Authors"
 $sqlResult | Format-Table
+
+# $httpMethodGet = "Get"
+
+$endPoint2 = "$baseUrl/api/Books"
+
+$jsonBook = '{
+    "Title": "Gabriels Bok",
+    "ISBN": "9781250313188",
+    "PublicationYear": "2020-07-01",
+    "AuthorIds": [1,2]
+}'
+
+$response2 = Invoke-RestMethod -Uri $endPoint2 -Method $httpMethod -Body $jsonBook -ContentType "application/json"
+write-host $response2
+$response2 | Format-Table
