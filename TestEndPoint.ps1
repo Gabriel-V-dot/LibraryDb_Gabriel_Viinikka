@@ -206,9 +206,10 @@ $jsonLoaners = '{
   "firstName": "Staffan",
   "lastName": "Stalledräng"
 }'
+
 foreach($loaner in $jsonLoaners){
     $localEndpoint = $endPointRoute + $endPoints[3]
-    $response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[1] -Body $book -ContentType "application/json"
+    $response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[1] -Body $loaner -ContentType "application/json"
     $response | Format-Table
 }
 
