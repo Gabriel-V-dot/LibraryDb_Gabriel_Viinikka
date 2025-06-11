@@ -97,47 +97,134 @@ Read-Host "Press Enter to continue when the server is started..."
 ### ------------Post a movie
 
 
-Write-Host "`nCreate an Author"
+Write-Host "`nCreate Authors"
 
 
-$httpMethod = "Post"   ### "Get", "Post", "Put", "Delete"
+$httpMethods = "Get", "Post", "Put", "Delete"
 
-$endPoint = "$baseUrl/api/Authors"
+$endPointRoute = "$baseUrl/api/"
+
+$endPoints = "Authors", "Books", "Inventories", "Loaners", "LoanCards", "Loans", "Ratings"
+
+# Endpoints för följande funktionalitet i Webb-APIet ska finnas
+# Skapa en författare
+# Skapa en bok
+# Skapa en ny låntagare
+# Lista alla böcker
+# Hämta information om en specifik bok
+# Låna en bok
+# Lämna tillbaka en bok
+# Ta bort låntagare
+# Ta bort böcker
+# Ta bort författare
 
 write-host $baseUrl
 
-$json = '{ 
+$jsonAuthors = '{ 
+    "FirstName": "Tamsyn", 
+    "LastName": "Muir" 
+}', 
+'{
+    "FirstName": "J.R.R", 
+    "LastName": "Tolkien" 
+}', 
+'{
+    "FirstName": "Hans", 
+    "LastName": "Rosling" 
+}', 
+'{
+    "FirstName": "Ola", 
+    "LastName": "Rosling" 
+}', 
+'{
+    "FirstName": "Anna", 
+    "LastName": "Rosling Rönnlund" 
+}', 
+'{
     "FirstName": "Gabriel", 
     "LastName": "Viinikka" 
 }'
 
-$response = Invoke-RestMethod -Uri $endPoint -Method $httpMethod -Body $json -ContentType "application/json"
+
+foreach($author in $jsonAuthors){
+$localEndpoint = $endPointRoute + $endPoints[0]
+$response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[1] -Body $author -ContentType "application/json"
 $response | Format-Table
 
-$json = '{
-    "FirstName": "Gabriella", 
-    "LastName": "Viinikka" 
+}
+
+$jsonBooks = '{
+    "Title": "Gideon The Ninth",
+    "ISBN": "9781250313188",
+    "PublicationYear": "2020-07-01",
+    "AuthorIds": [1]
+}',
+'{
+    "Title": "Sagan om konungens återkomst",
+    "ISBN": "9120059175",
+    "PublicationYear": "1961-01-01",
+    "AuthorIds": [2]
+}',
+'{
+    "Title": "Gabriels testbok med felaktigt ISBN",
+    "ISBN": "12345",
+    "PublicationYear": "2025-06-11",
+    "AuthorIds": [6]
+}',
+'{
+    "Title": "FACTFULNESS",
+    "ISBN": "9781473637474",
+    "PublicationYear": "2019-01-01",
+    "AuthorIds": [3,4,5]
+}',
+'{
+    "Title": "FACTFULNESS",
+    "ISBN": "9781473637474",
+    "PublicationYear": "2019-01-01",
+    "AuthorIds": [3,4,5]
 }'
 
-$response = Invoke-RestMethod -Uri $endPoint -Method $httpMethod -Body $json -ContentType "application/json"
+foreach($book in $jsonBooks){
+    $localEndpoint = $endPointRoute + $endPoints[1]
+    $response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[1] -Body $book -ContentType "application/json"
+    $response | Format-Table
+}
+Read-Host "Please review the entered Books before proceeding, press enter to proceed and see all books in the library thus far..."
+$localEndpoint = $endPointRoute + $endPoints[1]
+$response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[0] -Body $book -ContentType "application/json"
 $response | Format-Table
 
+$jsonLoaners = '{
+  "firstName": "Gabriel",
+  "lastName": "Viinikka"
+}',
+'{
+  "firstName": "Benjamin",
+  "lastName": "Österlund"
+}',
+'{
+  "firstName": "Staffan",
+  "lastName": "Stalledräng"
+}'
+foreach($loaner in $jsonLoaners){
+    $localEndpoint = $endPointRoute + $endPoints[3]
+    $response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[1] -Body $book -ContentType "application/json"
+    $response | Format-Table
+}
 
-### ------------ Query Author from the database
+$localEndpoint = $endPointRoute + $endPoints[3]
+    $response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[0] -Body $book -ContentType "application/json"
+    $response | Format-Table
+
+Read-Host "please review the entered authors and books before querying directly from the database, press enter to proceed..."
+### ------------ Query Author, Books, Loaners from the database
 $sqlResult = Invoke-Sqlcmd -ConnectionString $connectionString -Query "Select * FROM Authors"
 $sqlResult | Format-Table
 
 # $httpMethodGet = "Get"
 
-$endPoint2 = "$baseUrl/api/Books"
+$sqlResult = Invoke-Sqlcmd -ConnectionString $connectionString -Query "Select * FROM Books"
+$sqlResult | Format-Table
 
-$jsonBook = '{
-    "Title": "Gabriels Bok",
-    "ISBN": "9781250313188",
-    "PublicationYear": "2020-07-01",
-    "AuthorIds": [1,2]
-}'
-
-$response2 = Invoke-RestMethod -Uri $endPoint2 -Method $httpMethod -Body $jsonBook -ContentType "application/json"
-write-host $response2
-$response2 | Format-Table
+$sqlResult = Invoke-Sqlcmd -ConnectionString $connectionString -Query "Select * FROM Loaners"
+$sqlResult | Format-Table
