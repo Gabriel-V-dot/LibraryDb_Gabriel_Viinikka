@@ -143,6 +143,10 @@ $jsonAuthors = '{
 '{
     "FirstName": "Gabriel", 
     "LastName": "Viinikka" 
+}', 
+'{
+    "FirstName": "Nicholas", 
+    "LastName": "Sparks" 
 }'
 
 
@@ -177,11 +181,18 @@ $jsonBooks = '{
     "PublicationYear": "2019-01-01",
     "AuthorIds": [3,4,5]
 }',
+#trying to add a duplicate of a previous book below
 '{
     "Title": "FACTFULNESS",
     "ISBN": "9781473637474",
     "PublicationYear": "2019-01-01",
     "AuthorIds": [3,4,5]
+}',
+'{
+    "Title": "The Notebook",
+    "ISBN": "9781455582877",
+    "PublicationYear": "2014-07-01",
+    "AuthorIds": [7]
 }'
 
 foreach($book in $jsonBooks){
@@ -189,10 +200,69 @@ foreach($book in $jsonBooks){
     $response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[1] -Body $book -ContentType "application/json"
     $response | Format-Table
 }
+
 Read-Host "Please review the entered Books before proceeding, press enter to proceed and see all books in the library thus far..."
 $localEndpoint = $endPointRoute + $endPoints[1]
 $response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[0] -Body $book -ContentType "application/json"
 $response | Format-Table
+
+
+$jsonInventories = 
+#to simulate a book beeing returned too late, the first invetorybook will have a negative daysToLoan
+    '{
+        "bookId": 1,
+        "daysToLoan": -1
+    }',
+    '{
+        "bookId": 1,
+        "daysToLoan": 10
+    }',
+    '{
+        "bookId": 1,
+        "daysToLoan": 10
+    }',
+    '{
+        "bookId": 2,
+        "daysToLoan": 14
+    }',
+    '{
+        "bookId": 2,
+        "daysToLoan": 14
+    }',
+    '{
+        "bookId": 2,
+        "daysToLoan": 14
+    }',
+    '{
+        "bookId": 3,
+        "daysToLoan": 25
+    }',
+    '{
+        "bookId": 3,
+        "daysToLoan": 25
+    }',
+    '{
+        "bookId": 3,
+        "daysToLoan": 25
+    }',
+    '{
+        "bookId": 3,
+        "daysToLoan": 25
+    }'
+
+
+foreach($inventoryBook in $jsonInventories){
+    $localEndpoint = $endPointRoute + $endPoints[2]
+    $response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[1] -Body $inventoryBook -ContentType "application/json"
+    $response | Format-Table
+}
+
+$localEndpoint = $endPointRoute + $endPoints[2]
+$response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[0] -Body $Inventories -ContentType "application/json"
+$response | Format-Table
+
+Read-Host "Review the entered physical InventoryBooks before proceeding, press enter to proceed with the script."
+
 
 $jsonLoaners = '{
   "firstName": "Gabriel",
@@ -214,10 +284,183 @@ foreach($loaner in $jsonLoaners){
 }
 
 $localEndpoint = $endPointRoute + $endPoints[3]
-    $response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[0] -Body $book -ContentType "application/json"
+    $response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[0] -Body $loaners -ContentType "application/json"
     $response | Format-Table
 
-Read-Host "please review the entered authors and books before querying directly from the database, press enter to proceed..."
+Read-Host "Review added Loaners before proceeding, press enter to proceed..."
+
+
+$jsonLoanCards = 
+    '{
+        "loanerId":1,
+        "validTime":5
+    }',
+    '{
+        "loanerId":2,
+        "validTime":5
+    }',
+    '{
+        "loanerId":3,
+        "validTime":5
+    }'
+
+
+foreach($card in $jsonLoanCards){
+    $localEndpoint = $endPointRoute + $endPoints[4]
+    $response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[1] -Body $card -ContentType "application/json"
+    $response | Format-Table
+}
+
+$localEndpoint = $endPointRoute + $endPoints[4]
+    $response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[0] -Body $cards -ContentType "application/json"
+    $response | Format-Table
+
+Read-Host "Review added LoanCards before proceeding, press enter to proceed..."
+
+
+
+ $jsonLoans = 
+    '{
+        "inventoryId":1,
+        "loanCardId":1
+    }',
+    '{
+        "inventoryId":2,
+        "loanCardId":1
+    }',
+    '{
+        "inventoryId":3,
+        "loanCardId":1
+    }',
+    '{
+        "inventoryId":4,
+        "loanCardId":2
+    }',
+    '{
+        "inventoryId":5,
+        "loanCardId":3
+    }',
+    #This loan below here should fail since it tries to loan the same book is already loaned out earlier.
+    '{
+        "inventoryId":2,
+        "loanCardId":3
+    }',
+    '{
+        "inventoryId":6,
+        "loanCardId":2
+    }',
+    '{
+        "inventoryId":7,
+        "loanCardId":3
+    }'
+
+foreach($loan in $jsonLoans){
+    $localEndpoint = $endPointRoute + $endPoints[5]
+    $response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[1] -Body $loan -ContentType "application/json"
+    $response | Format-Table
+}
+
+
+$localEndpoint = $endPointRoute + $endPoints[5]
+    $response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[0] -Body $loans -ContentType "application/json"
+    $response | Format-Table
+
+Read-Host "Review added new Loans before proceeding, press enter to proceed..."
+
+$jsonReturns = 
+    '{
+        "inventoryId":1
+    }',
+    '{
+        "inventoryId":2
+    }',
+    '{
+        "inventoryId":3
+    }',
+    '{
+        "inventoryId":4
+    }',
+    '{
+        "inventoryId":5
+    }',
+    '{
+        "inventoryId":6
+    }',
+    '{
+        "inventoryId":7
+    }',
+    # To simulate a return of a book that was never loaned
+    '{
+        "inventoryId":10
+    }'
+
+foreach($return in $jsonReturns){
+    $localEndpoint = $endPointRoute + $endPoints[5]
+    $response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[2] -Body $return -ContentType "application/json"
+    $response | Format-Table
+}
+
+$localEndpoint = $endPointRoute + $endPoints[5]
+    $response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[0] -Body $loans -ContentType "application/json"
+    $activeLoans = $response.ActiveLoanDTOs
+    $returnedLoans = $response.returnedLoanDTOs
+
+foreach($activeLoan in $activeLoans){
+    $activeLoan | Format-Table
+} 
+foreach($returnedLoan in $returnedLoans){
+    $returnedLoan | Format-Table
+}
+
+
+Read-Host "Review the returned Loans before proceeding, press enter to proceed..."
+
+$jsonRatings = @(
+    [PSCustomObject]
+        @{
+        bookId = "1";
+        $jsonRating = '{
+                "score":5,
+                "comment":"This book was amazing"
+            }'
+
+        },
+    [PSCustomObject]
+        @{
+        bookId = "4";
+        $jsonRating = '{
+                "score":1,
+                "comment":"This book was awful, avoid at all costs!"
+            }'
+
+        }
+    
+)
+
+
+foreach($rating in $jsonRatings){
+    $localEndpoint = $endPointRoute + $endPoints[6] + $rating.bookId
+    $response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[1] -Body $rating.jsonRating -ContentType "application/json"
+    $response | Format-Table
+}
+
+$localEndpoint = $endPointRoute + $endPoints[6]
+    $response = Invoke-RestMEthod -Uri $localEndpoint -Method $httpMethods[0] -Body $ratings -ContentType "application/json"
+    $response | Format-Table
+
+Read-Host "Review the ratings added before proceeding, press enter to proceed..."
+
+
+$localEndpoint = $endPointRoute + $endPoints[1]
+$response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[0] -Body $book -ContentType "application/json"
+$response | Format-Table
+
+Read-Host "Please review the new status of Books in the library database before proceeding, press enter to proceed..."
+
+
+
+
+Read-Host "please review the entered data and returned results from the endpoints to your satisfaction, before querying directly from the database, press enter to proceed..."
 ### ------------ Query Author, Books, Loaners from the database
 $sqlResult = Invoke-Sqlcmd -ConnectionString $connectionString -Query "Select * FROM Authors"
 $sqlResult | Format-Table
@@ -229,3 +472,4 @@ $sqlResult | Format-Table
 
 $sqlResult = Invoke-Sqlcmd -ConnectionString $connectionString -Query "Select * FROM Loaners"
 $sqlResult | Format-Table
+

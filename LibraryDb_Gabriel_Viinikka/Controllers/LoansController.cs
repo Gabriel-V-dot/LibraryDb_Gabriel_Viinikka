@@ -125,7 +125,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         // POST: api/Loans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Loan>> PostLoan(CreateLoanDTO createLoanDTO)
+        public async Task<ActionResult<ActiveLoanDTO>> PostLoan(CreateLoanDTO createLoanDTO)
         {
             try
             {
