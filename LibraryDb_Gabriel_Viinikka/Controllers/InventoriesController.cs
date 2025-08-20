@@ -26,7 +26,14 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InventoryDTO>>> GetInventory()
         {
-            return await _context.Inventories.AsNoTracking().Include(i => i.Book).Select(i => i.ToInventoryDTO()).ToListAsync();
+            try
+            {
+                return await _context.Inventories.AsNoTracking().Include(i => i.Book).Select(i => i.ToInventoryDTO()).ToListAsync();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET: api/Inventories/5
@@ -79,33 +86,49 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpPost]
         public async Task<ActionResult<InventoryDTO>> PostInventory(CreateInventoryDTO createInventoryDTO)
         {
-            Book? book = await _context.Books.FindAsync(createInventoryDTO.BookId);
-            if (book == null) return NotFound();
+            try
+            {
+                Book? book = await _context.Books.FindAsync(createInventoryDTO.BookId);
+                if (book == null) return NotFound();
 
-            Inventory inventory = createInventoryDTO.ToInventory(book);
+                Inventory inventory = createInventoryDTO.ToInventory(book);
 
-            _context.Inventories.Add(inventory);
-            await _context.SaveChangesAsync();
+                _context.Inventories.Add(inventory);
+                await _context.SaveChangesAsync();
 
-            InventoryDTO inventoryDTO = inventory.ToInventoryDTO();
+                InventoryDTO inventoryDTO = inventory.ToInventoryDTO();
 
-            return CreatedAtAction("GetInventory", new { id = inventoryDTO.Id }, inventoryDTO);
+                return CreatedAtAction("GetInventory", new { id = inventoryDTO.Id }, inventoryDTO);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/Inventories/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInventory(int id)
         {
-            var inventory = await _context.Inventories.FindAsync(id);
-            if (inventory == null)
+            try
             {
-                return NotFound();
+                var inventory = await _context.Inventories.FindAsync(id);
+                if (inventory == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Inventories.Remove(inventory);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
-
-            _context.Inventories.Remove(inventory);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
 
         private bool InventoryExists(int id)
