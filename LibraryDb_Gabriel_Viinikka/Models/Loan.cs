@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// fields required for new Loan:
-    /// LoanDate, InventoryBook and LoanCard
+    /// LoanDate, Book and LoanCard
     /// </summary>
     public class Loan()
     {
