@@ -418,7 +418,7 @@ Read-Host "Review the returned Loans before proceeding, press enter to proceed..
 $jsonRatings = @(
     [PSCustomObject]
         @{
-        bookId = "1";
+        $bookId = "1";
         $jsonRating = '{
                 "score":5,
                 "comment":"This book was amazing"
@@ -427,7 +427,7 @@ $jsonRatings = @(
         },
     [PSCustomObject]
         @{
-        bookId = "4";
+        $bookId = "4";
         $jsonRating = '{
                 "score":1,
                 "comment":"This book was awful, avoid at all costs!"
