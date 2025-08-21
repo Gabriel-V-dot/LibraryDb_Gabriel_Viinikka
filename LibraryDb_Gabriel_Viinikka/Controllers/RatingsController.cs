@@ -36,14 +36,22 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Rating>> GetRating(int id)
         {
-            var rating = await _context.Ratings.FindAsync(id);
-
-            if (rating == null)
+            try
             {
-                return NotFound();
-            }
+                var rating = await _context.Ratings.FindAsync(id);
 
-            return rating;
+                if (rating == null)
+                {
+                    return NotFound();
+                }
+
+                return rating;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
 
         // PUT: api/Ratings/5
@@ -105,16 +113,24 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRating(int id)
         {
-            var rating = await _context.Ratings.FindAsync(id);
-            if (rating == null)
+            try
             {
-                return NotFound();
+                var rating = await _context.Ratings.FindAsync(id);
+                if (rating == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Ratings.Remove(rating);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
-
-            _context.Ratings.Remove(rating);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
 
         private bool RatingExists(int id)
