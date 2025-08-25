@@ -107,16 +107,16 @@ $endPointRoute = "$baseUrl/api/"
 $endPoints = "Authors", "Books", "Inventories", "Loaners", "LoanCards", "Loans", "Ratings"
 
 # Endpoints för följande funktionalitet i Webb-APIet ska finnas
-# Skapa en författare
-# Skapa en bok
-# Skapa en ny låntagare
-# Lista alla böcker
+# Skapa en författare check
+# Skapa en bok check
+# Skapa en ny låntagare check
+# Lista alla böcker 
 # Hämta information om en specifik bok
-# Låna en bok
-# Lämna tillbaka en bok
+# Låna en bok check
+# Lämna tillbaka en bok check
 # Ta bort låntagare
 # Ta bort böcker
-# Ta bort författare
+# Ta bort författare check
 
 write-host $baseUrl
 
@@ -156,6 +156,8 @@ $response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[1] -Body 
 $response | Format-Table
 
 }
+
+
 
 $jsonBooks = '{
     "Title": "Gideon The Ninth",
@@ -418,8 +420,8 @@ Read-Host "Review the returned Loans before proceeding, press enter to proceed..
 $jsonRatings = @(
     [PSCustomObject]
         @{
-        $bookId = "1";
-        $jsonRating = '{
+        bookId = "/1";
+        jsonRating = '{
                 "score":5,
                 "comment":"This book was amazing"
             }'
@@ -427,8 +429,8 @@ $jsonRatings = @(
         },
     [PSCustomObject]
         @{
-        $bookId = "4";
-        $jsonRating = '{
+        bookId = "/3";
+        jsonRating = '{
                 "score":1,
                 "comment":"This book was awful, avoid at all costs!"
             }'
@@ -440,12 +442,13 @@ $jsonRatings = @(
 
 foreach($rating in $jsonRatings){
     $localEndpoint = $endPointRoute + $endPoints[6] + $rating.bookId
-    $response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[1] -Body $rating.jsonRating -ContentType "application/json"
+    Write-Host $localEndpoint
+    $response = Invoke-RestMethod -Uri $localEndpoint -Method "Post" -Body $rating.jsonRating -ContentType "application/json"
     $response | Format-Table
 }
 
 $localEndpoint = $endPointRoute + $endPoints[6]
-    $response = Invoke-RestMEthod -Uri $localEndpoint -Method $httpMethods[0] -Body $ratings -ContentType "application/json"
+    $response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[0] -Body $ratings -ContentType "application/json"
     $response | Format-Table
 
 Read-Host "Review the ratings added before proceeding, press enter to proceed..."
@@ -458,6 +461,25 @@ $response | Format-Table
 Read-Host "Please review the new status of Books in the library database before proceeding, press enter to proceed..."
 
 
+#To delete an Author
+Read-Host "Press enter to Delete Author Ola Rosling."
+
+$localEndpoint = $endPointRoute + $endPoints[0] + "/4"
+$response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[3] -ContentType "application/json"
+$response | Format-Table
+
+#To delete a Book
+Read-Host "press enter to delete the book The Notebook "
+
+    $localEndpoint = $endPointRoute + $endPoints[1] + "/5"
+    $response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[3] -ContentType "application/json"
+    $response | Format-Table
+
+#To Delete
+Read-Host "press enter to delete the Loaner Gabriel Viinikka"
+    $localEndpoint = $endPointRoute + $endPoints[3] + "/1"
+    $response = Invoke-RestMethod -Uri $localEndPoint -Method $httpMethods[3] -Body $loaner -ContentType "application/json"
+    $response | Format-Table
 
 
 Read-Host "please review the entered data and returned results from the endpoints to your satisfaction, before querying directly from the database, press enter to proceed..."

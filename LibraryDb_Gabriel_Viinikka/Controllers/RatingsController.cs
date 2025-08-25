@@ -87,7 +87,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
 
         // POST: api/Ratings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("{bookId}")]
         public async Task<ActionResult<Rating>> PostRating(CreateRatingDTO ratingDTO, int bookId)
         {
             try

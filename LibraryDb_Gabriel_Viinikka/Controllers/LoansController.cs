@@ -131,6 +131,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
             {
                 Inventory inventory = await _context.Inventories.
                     Include(inv => inv.Book)
+                    .ThenInclude(aut => aut.Authors)
                     .Where(inv => inv.Id == createLoanDTO.InventoryId)
                     .FirstAsync();
 
