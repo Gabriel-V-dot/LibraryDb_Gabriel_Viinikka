@@ -28,6 +28,7 @@ namespace LibraryDb_Gabriel_Viinikka.Controllers
         {
             return await _context.Ratings
                 .Include(rate => rate.Book)
+                .ThenInclude(auth => auth.Authors)
                 .Select(rate => rate.ToRatingDTO())
                 .ToListAsync();
         }
