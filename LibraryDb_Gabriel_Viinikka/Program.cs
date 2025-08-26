@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using Microsoft.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace LibraryDb_Gabriel_Viinikka
 {
@@ -38,6 +39,8 @@ namespace LibraryDb_Gabriel_Viinikka
                 connectionString = connectionBuilder.ConnectionString;
             }
 
+            Console.WriteLine(connectionString);
+
             builder.Services.AddDbContext<LibraryDbContext>(options =>
             {
                 options.UseSqlServer(connectionString).LogTo(message => Debug.WriteLine(message)).EnableSensitiveDataLogging().EnableDetailedErrors();
@@ -50,11 +53,10 @@ namespace LibraryDb_Gabriel_Viinikka
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
+           
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+            
 
             app.UseHttpsRedirection();
 
