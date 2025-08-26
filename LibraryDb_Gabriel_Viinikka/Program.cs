@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using Microsoft.Data.SqlClient;
 
 namespace LibraryDb_Gabriel_Viinikka
 {
@@ -11,20 +12,32 @@ namespace LibraryDb_Gabriel_Viinikka
     {
         public static void Main(string[] args)
         {
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var printedEnv = env ?? "";
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var printedEnv = environment ?? string.Empty;
             Console.WriteLine($"Environment set to {printedEnv.ToUpper()}");
 
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers().AddJsonOptions(opt =>
             {
                 opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
 
+          
             var connectionString = builder.Configuration.GetConnectionString("BooksDb");
+
+            if (environment == "Azure")
+            {
+                builder.Configuration.AddUserSecrets("9c0687a4-2bff-43da-9423-987d8bbbe253");
+                connectionString = builder.Configuration.GetConnectionString("AzureDB");
+                var connectionBuilder = new SqlConnectionStringBuilder(connectionString)
+                {
+                    Password = builder.Configuration["AzureDbPassword"]
+                };
+                connectionString = connectionBuilder.ConnectionString;
+            }
+
             builder.Services.AddDbContext<LibraryDbContext>(options =>
             {
                 options.UseSqlServer(connectionString).LogTo(message => Debug.WriteLine(message)).EnableSensitiveDataLogging().EnableDetailedErrors();
