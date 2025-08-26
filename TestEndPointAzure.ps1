@@ -34,7 +34,7 @@ Write-Host "Database Connection String: $connectionString" -ForegroundColor Blue
 
 
 # Get the database name from the connection string
-if ($connectionString -match "Database=(?<dbName>[^;]+)")
+if ($connectionString -match "Initial Catalog=(?<dbName>[^;]+)")
 {
     $databaseName = $matches['dbName']
     Write-Host "Database Name: $databaseName" -ForegroundColor Blue
@@ -495,3 +495,31 @@ $sqlResult | Format-Table
 $sqlResult = Invoke-Sqlcmd -ConnectionString $connectionString -Query "Select * FROM Loaners"
 $sqlResult | Format-Table
 
+
+$localEndpoint = $endPointRoute + $endPoints[0]
+$response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[0] -Body $author -ContentType "application/json"
+$response | Format-Table
+
+$localEndpoint = $endPointRoute + $endPoints[1]
+$response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[0] -Body $author -ContentType "application/json"
+$response | Format-Table
+
+$localEndpoint = $endPointRoute + $endPoints[2]
+$response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[0] -Body $author -ContentType "application/json"
+$response | Format-Table
+
+$localEndpoint = $endPointRoute + $endPoints[3]
+$response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[0] -Body $author -ContentType "application/json"
+$response | Format-Table
+
+$localEndpoint = $endPointRoute + $endPoints[4]
+$response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[0] -Body $author -ContentType "application/json"
+$response | Format-Table
+
+$localEndpoint = $endPointRoute + $endPoints[5]
+$response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[0] -Body $author -ContentType "application/json"
+$response | Format-Table
+
+$localEndpoint = $endPointRoute + $endPoints[6]
+$response = Invoke-RestMethod -Uri $localEndpoint -Method $httpMethods[0] -Body $author -ContentType "application/json"
+$response | Format-Table
